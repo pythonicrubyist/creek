@@ -1,52 +1,9 @@
 require 'zip/zipfilesystem'
 require 'nokogiri'
-require 'sax-machine'
 
 module Creek
-
-
-  class SAXValue
-    include SAXMachine
-    value :content
-  end
-
-
-  class SAXCell
-    include SAXMachine
-    attribute :r, :as => :row
-    attribute :t, :as => :type
-    attribute :s, :as => :sheet
-    elements :v, :as => :vals, :class => SAXValue
-  end
-
-
-  class SAXRow
-    include SAXMachine
-    attribute :collapsed
-    attribute :customFormat
-    attribute :customHeight
-    attribute :hidden
-    attribute :ht
-    attribute :outlineLevel
-    attribute :r, :as => :row_number
-    elements :c, :as => :cells, :class => SAXCell
-  end
-
-
-  class SAXSheetData
-    include SAXMachine
-    elements :row, :as => :rows, :class => SAXRow
-  end
-
-
-  class SAXSheet
-    include SAXMachine
-    element :worksheet
-    elements :sheetData, :as => :sheetDatas, :class => SAXSheetData
-  end
-
-
   class Creek::Sheet
+
     attr_reader :book,
                 :name,
                 :sheetid,
@@ -55,7 +12,9 @@ module Creek
                 :rid,
                 :index
 
+
     def initialize book, name, sheetid, state, visible, rid, index
+
       @book = book
       @name = name
       @sheetid = sheetid
@@ -63,6 +22,7 @@ module Creek
       @rid = rid
       @state = state
       @index = index
+
 
       # An XLS file has only 256 columns, however, an XLSX or XLSM file can contain up to 16384 columns.
       # This function creates a hash with all valid XLSX column names and associated indices.
@@ -78,32 +38,35 @@ module Creek
       quot = i/26
       (quot>0 ? col_name(quot-1) : "") + (i%26+65).chr
     end
- 
+
 
     # This will return a hash per row that includes the column names and cell values.
     # Empty cells will be also included in the hash with a nil value.
     def rows
-      path = "xl/worksheets/sheet#{@index}.xml"
-      if @book.files.file.exist?(path)
-        doc = @book.files.file.open path
-        stream = SAXSheet.parse(doc, :lazy => true)
-        Enumerator.new do |y|
-          stream.sheetDatas.first.rows.each do |row|
-            record = {:row => row.row_number, :cells => {}}
-            row.cells.each do |cell|
-              shared = (cell.type.eql? 's')
-              unless cell.vals.empty?
-                content = cell.vals.first.content
-                record[:cells][cell.row] = (shared ? @book.shared_strings.dictionary[content.to_i] : content)
-              end
+      # SAX parsing, Each element in the stream comes through as two events:
+      # one to open the element and one to close it.
+      opener = Nokogiri::XML::Reader::TYPE_ELEMENT
+      closer = Nokogiri::XML::Reader::TYPE_END_ELEMENT
+      Enumerator.new do |y|
+        shared, row, cell = nil, nil, nil
+        @book.files.file.open("xl/worksheets/sheet#{@index}.xml") do |xml|
+          Nokogiri::XML::Reader.from_io(xml).each do |node|
+            if (node.name.eql? 'row') and (node.node_type.eql? opener)
+              row = {:row => node.attribute('r'), :cells => {}}
+            elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
+              y << fill_in_empty_cells(row)
+            elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
+                shared = node.attribute('t').eql? 's'
+                cell = node.attribute('r')
+            elsif node.value?
+                row[:cells][cell] = (shared ? @book.shared_strings.dictionary[node.value.to_i] : node.value)
             end
-            y << fill_in_empty_cells(record)
           end
         end
       end
-    end 
+    end
 
-    private 
+
     # The unzipped XML file does not contain any node for empty cells.
     # Empty cells are being padded in using this function
     def fill_in_empty_cells row

@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Creek::VERSION
   spec.authors       = ["pythonicrubyist"]
   spec.email         = ["pythonicrubyist@gmail.com"]
-  spec.description   = %q{Parses large XLSX and XLSM files fast and efficiently using streaming parsing method.}
-  spec.summary       = %q{A Ruby library for parsing large XLSX and XLSXM files.}
+  spec.description   = %q{Streams and parses large Excel(xlsx and xlsm) files fast and efficiently.}
+  spec.summary       = %q{A Ruby gem for parsing large Excel(xlsx and xlsm) files.}
   spec.homepage      = "https://github.com/pythonicrubyist/creek"
   spec.license       = "MIT"
 
@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency 'rspec', '~> 2.13.0'
 
-  spec.add_dependency  'sax-machine', '~> 0.1.0'
   spec.add_dependency 'nokogiri', '~> 1.6.0'
   spec.add_dependency 'rubyzip', '~> 0.9.9'  
 end
