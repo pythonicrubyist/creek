@@ -1,5 +1,11 @@
 require 'creek'
 
+describe 'Creek trying to parsing an invalid file.' do
+  it 'open an XLSX file successfully.' do
+    lambda { Creek::Book.new 'specs/fixtures/invalid.xls' }.should raise_error 'Not a valid file format.'
+  end
+end
+
 describe 'Creek parsing a sample XLSX file' do
   before(:all) do
     @creek = Creek::Book.new 'specs/fixtures/sample.xlsx'

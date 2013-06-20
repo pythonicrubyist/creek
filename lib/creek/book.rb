@@ -10,6 +10,7 @@ module Creek
                 :shared_strings
 
     def initialize path
+      raise 'Not a valid file format.' unless (['.xlsx', '.xlsxm'].include? File.extname(path).downcase)
       @files = Zip::ZipFile.open path
       @shared_strings = Creek::SharedStrings.new(self)
     end
