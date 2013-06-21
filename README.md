@@ -17,12 +17,24 @@ To use it in Rails, add this line to your Gemfile:
 ## Basic Usage
 Creek can simply parse an Excel file by looping through the rows enumerator:
 ```ruby
+
 require 'creek'
 creek = Creek::Book.new "specs/fixtures/sample.xlsx"
-creek.sheets[0].rows.each do |row|
-  puts row.inspect
-  # => {"A1"=>"Content 1", "B1"=>nil, "C1"=>"Content 2", "D1"=>nil, "E1"=>"Content 3"}
+sheet= creek.sheets[0]
+
+sheet.rows.each do |row|
+  puts row.inspect # => {"A1"=>"Content 1", "B1"=>nil, D1"=>nil, "E1"=>"Content 3"}
 end
+
+
+sheet.rows_with_meta_data.each do |row|
+  puts row.inspect # => {"collapsed"=>"false", "customFormat"=>"false", "customHeight"=>"true", "hidden"=>"false", "ht"=>"12.1", "outlineLevel"=>"0", "r"=>"1", "cells"=>{"A1"=>"Content 1", "B1"=>nil, D1"=>nil, "E1"=>"Content 3"}}
+end
+
+
+sheet.state   # => 'visible'
+sheet.name    # => 'Sheet1'
+sheet.rid     # => 'rId2'
 ```
 
 
