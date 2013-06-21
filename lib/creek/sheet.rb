@@ -43,23 +43,30 @@ module Creek
     # This will return a hash per row that includes the column names and cell values.
     # Empty cells will be also included in the hash with a nil value.
     def rows
-      # SAX parsing, Each element in the stream comes through as two events:
-      # one to open the element and one to close it.
-      opener = Nokogiri::XML::Reader::TYPE_ELEMENT
-      closer = Nokogiri::XML::Reader::TYPE_END_ELEMENT
-      Enumerator.new do |y|
-        shared, row, cell = nil, nil, nil
-        @book.files.file.open("xl/worksheets/sheet#{@index}.xml") do |xml|
-          Nokogiri::XML::Reader.from_io(xml).each do |node|
-            if (node.name.eql? 'row') and (node.node_type.eql? opener)
-              row = {:row => node.attribute('r'), :cells => {}}
-            elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
-              y << fill_in_empty_cells(row)
-            elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
-                shared = node.attribute('t').eql? 's'
-                cell = node.attribute('r')
-            elsif node.value?
-                row[:cells][cell] = (shared ? @book.shared_strings.dictionary[node.value.to_i] : node.value)
+      path = "xl/worksheets/sheet#{@index}.xml"
+      if @book.files.file.exist?(path)
+        # SAX parsing, Each element in the stream comes through as two events:
+        # one to open the element and one to close it.
+        opener = Nokogiri::XML::Reader::TYPE_ELEMENT
+        closer = Nokogiri::XML::Reader::TYPE_END_ELEMENT
+        Enumerator.new do |y|
+          shared, row, cell = false, nil, nil
+          @book.files.file.open(path) do |xml|
+            Nokogiri::XML::Reader.from_io(xml).each do |node|
+              if (node.name.eql? 'row') and (node.node_type.eql? opener)
+                row = {:row => node.attribute('r'), :cells => {}}
+              elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
+                y << fill_in_empty_cells(row)
+              elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
+                  shared = node.attribute('t').eql? 's'
+                  cell = node.attribute('r')
+              elsif node.value?
+                if shared
+                  row[:cells][cell] = @book.shared_strings.dictionary[node.value.to_i] if @book.shared_strings.dictionary.has_key? node.value.to_i
+                else
+                  row[:cells][cell] = node.value
+                end
+              end
             end
           end
         end
