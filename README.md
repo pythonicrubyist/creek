@@ -17,12 +17,12 @@ To use it in Rails, add this line to your Gemfile:
 ## Basic Usage
 Creek can simply parse an Excel file by looping through the rows enumerator:
 ```ruby
-    require 'creek'
-    creek = Creek::Book.new "specs/fixtures/sample.xlsx"
-    creek.sheets[0].rows.each do |row|
-      puts row.inspect
-      # => {"A1"=>"Content 1", "B1"=>nil, "C1"=>"Content 2", "D1"=>nil, "E1"=>"Content 3"}
-    end
+require 'creek'
+creek = Creek::Book.new "specs/fixtures/sample.xlsx"
+creek.sheets[0].rows.each do |row|
+  puts row.inspect
+  # => {"A1"=>"Content 1", "B1"=>nil, "C1"=>"Content 2", "D1"=>nil, "E1"=>"Content 3"}
+end
 ```
 
 
@@ -43,7 +43,7 @@ Once this is complete, you should be able to run the test suite:
 
 ## Bug Reporting/Feature Request
 
-Please use the https://github.com/pythonicrubyist/creek/issues page to report bugs or suggest new enhancements.
+Please use the [Issues](https://github.com/pythonicrubyist/creek/issues) page to report bugs or suggest new enhancements.
 
 
 ## License
