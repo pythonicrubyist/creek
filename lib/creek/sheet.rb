@@ -30,15 +30,22 @@ module Creek
       end    
     end
 
+    ##
+    # Provides an Enumerator that returns a hash representing each row.
+    # The key of the hash is the Cell id and the value is the value of the cell.
     def rows
       rows_generator
     end
 
+    ##
+    # Provides an Enumerator that returns a hash representing each row.
+    # The hash contains meta data of the row and a 'cells' embended hash which contains the cell contents.
     def rows_with_meta_data
       rows_generator true
     end
 
     private
+    ##
     # Returns valid Excel column name for a given column index. 
     # For example, returns "A" for 0, "B" for 1 and "AQ" for 42.
     def col_name i
@@ -46,7 +53,8 @@ module Creek
       (quot>0 ? col_name(quot-1) : "") + (i%26+65).chr
     end
 
-    # This will return a hash per row that includes the column names and cell values.
+    ##
+    # Returns a hash per row that includes the cell ids and values.
     # Empty cells will be also included in the hash with a nil value.
     def rows_generator include_meta_data=false
       path = "xl/worksheets/sheet#{@index}.xml"
@@ -81,7 +89,7 @@ module Creek
         end
       end
     end
-
+    ##
     # The unzipped XML file does not contain any node for empty cells.
     # Empty cells are being padded in using this function
     def fill_in_empty_cells cells, row_number
