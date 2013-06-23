@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Creek::VERSION
   spec.authors       = ["pythonicrubyist"]
   spec.email         = ["pythonicrubyist@gmail.com"]
-  spec.description   = %q{Streams and parses large Excel(xlsx and xlsm) files fast and efficiently.}
+  spec.description   = %q{A Ruby gem that streams and parses large Excel(xlsx and xlsm) files fast and efficiently.}
   spec.summary       = %q{A Ruby gem for parsing large Excel(xlsx and xlsm) files.}
   spec.homepage      = "https://github.com/pythonicrubyist/creek"
   spec.license       = "MIT"
