@@ -1,0 +1,61 @@
+= Creek -- Stream parser for large Excel(xlsx and xlsm) files.
+
+Inspired by {Roo}[https://github.com/hmcgowan/roo], {Dullard}[https://github.com/thirtyseven/dullard] and {Spreadsheet}[https://github.com/zdavatz/spreadsheet] Creek is a fast, simple and efficient way of parsing xlsx and xlsm files using SAX parsing.
+
+
+== Installation
+
+Creek can be used from the command line or as part of a Ruby web framework. To install the gem using terminal, run the following command:
+
+    gem install creek
+
+To use it in Rails, add this line to your Gemfile:
+
+    gem "creek"
+
+
+== Basic Usage
+Creek can simply parse an Excel file by looping through the rows enumerator:
+
+    require 'creek'
+    creek = Creek::Book.new "specs/fixtures/sample.xlsx"
+    sheet= creek.sheets[0]
+
+    sheet.rows.each do |row|
+      puts row.inspect # => {"A1"=>"Content 1", "B1"=>nil, D1"=>nil, "E1"=>"Content 3"}
+    end
+
+
+    sheet.rows_with_meta_data.each do |row|
+      puts row.inspect # => {"collapsed"=>"false", "customFormat"=>"false", "customHeight"=>"true", "hidden"=>"false", "ht"=>"12.1", "outlineLevel"=>"0", "r"=>"1", "cells"=>{"A1"=>"Content 1", "B1"=>nil, D1"=>nil, "E1"=>"Content 3"}}
+    end
+
+
+    sheet.state   # => 'visible'
+    sheet.name    # => 'Sheet1'
+    sheet.rid     # => 'rId2'
+
+
+== Contributing
+
+Contributions are welcomed. You can fork a repository, add your code changes to the forked branch, ensure all existing unit tests pass, create new unit tests cover your new changes and finally create a pull request.
+
+After forking and then cloning the repository locally, install Bundler and then use it
+to install the development gem dependecies:
+
+    gem install bundler
+    bundle install
+
+Once this is complete, you should be able to run the test suite:
+
+    rake
+
+
+== Bug Reporting/Feature Request
+
+Please use the [Issues](https://github.com/pythonicrubyist/creek/issues) page to report bugs or suggest new enhancements.
+
+
+== License
+
+Creek has been published under [MIT License](https://github.com/pythonicrubyist/creek/blob/master/LICENSE.txt)
