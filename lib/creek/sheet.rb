@@ -71,8 +71,8 @@ module Creek
                 row = node.attributes
                 cells = Hash.new
               elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
-                processed_cells = fill_in_empty_cells(cells, row['r'])
-                row['cells'] = processed_cells 
+                processed_cells = fill_in_empty_cells(cells, row['r'], cell)
+                row['cells'] = processed_cells
                 y << (include_meta_data ? row : processed_cells)
               elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
                   shared = node.attribute('t').eql? 's'
@@ -92,11 +92,11 @@ module Creek
     ##
     # The unzipped XML file does not contain any node for empty cells.
     # Empty cells are being padded in using this function
-    def fill_in_empty_cells cells, row_number
+    def fill_in_empty_cells cells, row_number, last_col
       new_cells = Hash.new
       unless cells.empty?
         keys = cells.keys.sort
-        last_col =  keys.last.gsub(row_number, '')
+        last_col = last_col.gsub(row_number, '')
         last_col_index = @@excel_col_names[last_col]
         [*(0..last_col_index)].each do |i|
           col = col_name i
