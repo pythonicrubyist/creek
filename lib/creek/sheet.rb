@@ -69,7 +69,9 @@ module Creek
             Nokogiri::XML::Reader.from_io(xml).each do |node|
               if (node.name.eql? 'row') and (node.node_type.eql? opener)
                 row = node.attributes
+                row['cells'] = Hash.new
                 cells = Hash.new
+                y << (include_meta_data ? row : cells) if node.self_closing?
               elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
                 processed_cells = fill_in_empty_cells(cells, row['r'], cell)
                 row['cells'] = processed_cells

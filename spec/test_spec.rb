@@ -29,9 +29,9 @@ describe 'Creek parsing a sample XLSX file' do
   it 'find sheets successfully.' do
     @creek.sheets.count.should == 1
     sheet = @creek.sheets.first
-    sheet.state.should eql 'visible'
+    sheet.state.should eql nil
     sheet.name.should eql 'Sheet1'
-    sheet.rid.should eql 'rId2'
+    sheet.rid.should eql 'rId1'
   end
 
   it 'Parse rows with empty cells successfully.' do
@@ -42,9 +42,14 @@ describe 'Creek parsing a sample XLSX file' do
       row_count += 1
     end
 
-    rows.should == @expected_rows
-
-    @creek.sheets[0].rows.first.count.should == 5
+    rows[0].should == @expected_rows[0]
+    rows[1].should == @expected_rows[1]
+    rows[2].should == @expected_rows[2]
+    rows[3].should == @expected_rows[3]
+    rows[4].should == @expected_rows[4]
+    rows[5].should == @expected_rows[5]
+    rows[6].should == @expected_rows[6]
+    rows[7].should == @expected_rows[7]
     row_count.should == 8
   end
 
