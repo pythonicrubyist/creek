@@ -67,11 +67,12 @@ module Creek
           shared, row, cells, cell = false, nil, {}, nil
           @book.files.file.open(path) do |xml|
             Nokogiri::XML::Reader.from_io(xml).each do |node|
-              if node.attributes['s'] == '5' && node.node_type == 1
+              if( node.attributes['s'] == '5' || node.attributes['s'] == '1') && node.node_type == 1
                 #Date type cell
                 days = node.inner_xml.gsub(/<v(.)*\">|<\/v>/, '').to_i
                 date = (Date.new(1900) + (days - 2)).strftime('%m/%d/%Y')
                 cell = node.attribute('r')
+                print date.inspect
                 cells[cell] = date
               else
                 if (node.name.eql? 'row') and (node.node_type.eql? opener)
