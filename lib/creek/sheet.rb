@@ -72,6 +72,7 @@ module Creek
                 days = node.inner_xml.gsub(/<v(.)*\">|<\/v>/, '').to_i
                 date = (Date.new(1900) + (days - 2)).strftime('%m/%d/%Y')
                 cell = node.attribute('r')
+                print date.inspect
                 cells[cell] = date
               else
                 if (node.name.eql? 'row') and (node.node_type.eql? opener)
