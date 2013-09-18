@@ -1,6 +1,6 @@
 require 'zip/zipfilesystem'
 require 'nokogiri'
-
+require 'date'
 module Creek
   class Creek::Sheet
 
@@ -67,23 +67,31 @@ module Creek
           shared, row, cells, cell = false, nil, {}, nil
           @book.files.file.open(path) do |xml|
             Nokogiri::XML::Reader.from_io(xml).each do |node|
-              if (node.name.eql? 'row') and (node.node_type.eql? opener)
-                row = node.attributes
-                row['cells'] = Hash.new
-                cells = Hash.new
-                y << (include_meta_data ? row : cells) if node.self_closing?
-              elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
-                processed_cells = fill_in_empty_cells(cells, row['r'], cell)
-                row['cells'] = processed_cells
-                y << (include_meta_data ? row : processed_cells)
-              elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
-                  shared = node.attribute('t').eql? 's'
-                  cell = node.attribute('r')
-              elsif node.value?
-                if shared
-                  cells[cell] = @book.shared_strings.dictionary[node.value.to_i] if @book.shared_strings.dictionary.has_key? node.value.to_i
-                else
-                  cells[cell] = node.value
+              if node.attributes['s'] == '5' && node.node_type == 1
+                #Date type cell
+                days = node.inner_xml.gsub(/<v(.)*\">|<\/v>/, '').to_i
+                date = (Date.new(1900) + (days - 2)).strftime('%m/%d/%Y')
+                cell = node.attribute('r')
+                cells[cell] = date
+              else
+                if (node.name.eql? 'row') and (node.node_type.eql? opener)
+                  row = node.attributes
+                  row['cells'] = Hash.new
+                  cells = Hash.new
+                  y << (include_meta_data ? row : cells) if node.self_closing?
+                elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
+                  processed_cells = fill_in_empty_cells(cells, row['r'], cell)
+                  row['cells'] = processed_cells
+                  y << (include_meta_data ? row : processed_cells)
+                elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
+                    shared = node.attribute('t').eql? 's'
+                    cell = node.attribute('r')
+                elsif node.value?
+                  if shared
+                    cells[cell] = @book.shared_strings.dictionary[node.value.to_i] if @book.shared_strings.dictionary.has_key? node.value.to_i
+                  else
+                    cells[cell] = node.value
+                  end
                 end
               end
             end
