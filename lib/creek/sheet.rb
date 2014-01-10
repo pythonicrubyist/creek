@@ -1,4 +1,4 @@
-require 'zip/zipfilesystem'
+require 'zip/filesystem'
 require 'nokogiri'
 
 module Creek
@@ -27,7 +27,7 @@ module Creek
       @@excel_col_names = Hash.new
       (0...16384).each do |i|
         @@excel_col_names[col_name(i)] = i
-      end    
+      end
     end
 
     ##
@@ -46,7 +46,7 @@ module Creek
 
     private
     ##
-    # Returns valid Excel column name for a given column index. 
+    # Returns valid Excel column name for a given column index.
     # For example, returns "A" for 0, "B" for 1 and "AQ" for 42.
     def col_name i
       quot = i/26
@@ -106,7 +106,7 @@ module Creek
           unless cells.has_key? id
               new_cells[id] = nil
           else
-            new_cells[id] = cells[id] 
+            new_cells[id] = cells[id]
           end
         end
       end
