@@ -1,8 +1,18 @@
 require 'creek'
 
 describe 'Creek trying to parsing an invalid file.' do
-  it 'open an XLSX file successfully.' do
-    lambda { Creek::Book.new 'specs/fixtures/invalid.xls' }.should raise_error 'Not a valid file format.'
+  it 'Fail to open a legacy xls file.' do
+    lambda { Creek::Book.new 'spec/fixtures/invalid.xls' }.should raise_error 'Not a valid file format.'
+  end
+
+  it 'Ignore file extensions on request.' do
+    path = 'spec/fixtures/sample-as-zip.zip'
+    Creek::Book.new path, :check_file_extension => false
+  end
+
+  it 'Check file extension when requested.' do
+    open_book = lambda { Creek::Book.new 'spec/fixtures/invalid.xls', :check_file_extension => true }
+    open_book.should raise_error 'Not a valid file format.'
   end
 end
 
