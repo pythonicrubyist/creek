@@ -1,9 +1,26 @@
 require 'creek'
 
 describe 'Creek trying to parsing an invalid file.' do
-  it 'open an XLSX file successfully.' do
-    lambda { Creek::Book.new 'specs/fixtures/invalid.xls' }.should raise_error 'Not a valid file format.'
+  it 'Fail to open a legacy xls file.' do
+    lambda { Creek::Book.new 'spec/fixtures/invalid.xls' }.should raise_error 'Not a valid file format.'
   end
+
+  it 'Ignore file extensions on request.' do
+    path = 'spec/fixtures/sample-as-zip.zip'
+    lambda { Creek::Book.new path, :check_file_extension => false }.should_not raise_error
+  end
+
+  it 'Check file extension when requested.' do
+    open_book = lambda { Creek::Book.new 'spec/fixtures/invalid.xls', :check_file_extension => true }
+    open_book.should raise_error 'Not a valid file format.'
+  end
+
+  it 'Check file extension of original_filename if passed.' do
+    path = 'spec/fixtures/temp_string_io_file_path_with_no_extension'
+    lambda { Creek::Book.new path, :original_filename => 'invalid.xls' }.should raise_error 'Not a valid file format.'
+    lambda { Creek::Book.new path, :original_filename => 'valid.xlsx' }.should_not raise_error
+  end
+
 end
 
 describe 'Creek parsing a sample XLSX file' do
@@ -38,7 +55,7 @@ describe 'Creek parsing a sample XLSX file' do
     rows = Array.new
     row_count = 0
     @creek.sheets[0].rows.each do |row|
-      rows << row     
+      rows << row
       row_count += 1
     end
 
@@ -57,7 +74,7 @@ describe 'Creek parsing a sample XLSX file' do
     rows = Array.new
     row_count = 0
     @creek.sheets[0].rows_with_meta_data.each do |row|
-      rows << row     
+      rows << row
       row_count += 1
     end
     rows.map{|r| r['cells']}.should == @expected_rows
