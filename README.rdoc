@@ -35,6 +35,21 @@ Creek can simply parse an Excel file by looping through the rows enumerator:
     sheet.name    # => 'Sheet1'
     sheet.rid     # => 'rId2'
 
+== Filename considerations
+By default, Creek will ensure that the file extension is either *.xlsx or *.xlsm, but this check can be circumvented as needed:
+
+    path = 'sample-as-zip.zip'
+    Creek::Book.new path, :check_file_extension => false
+
+By default, the Rails {file_field_tag}[http://api.rubyonrails.org/classes/ActionView/Helpers/FormTagHelper.html#method-i-file_field_tag] uploads to a temporary location and stores the original filename with the StringIO object. (See {this section}[http://guides.rubyonrails.org/form_helpers.html#uploading-files] of the Rails Guides for more information.)
+
+Creek can parse this directly without the need for file upload gems such as Carrierwave or Paperclip by passing the original filename as an option:
+
+    # Import endpoint in Rails controller
+    def import
+      file = params[:file]
+      Creek::Book.new file[:path], file[:original_filename]
+    end
 
 == Contributing
 
