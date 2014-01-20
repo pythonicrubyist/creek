@@ -1,4 +1,4 @@
-require 'zip/filesystem'
+require 'zip/zipfilesystem'
 require 'nokogiri'
 
 module Creek
@@ -9,11 +9,6 @@ module Creek
                 :sheets,
                 :shared_strings
 
-<<<<<<< HEAD
-    def initialize path
-      raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? File.extname(path).downcase)
-      @files = Zip::File.open path
-=======
     def initialize path, options = {}
       check_file_extension = options.fetch(:check_file_extension, true)
       if check_file_extension
@@ -21,7 +16,6 @@ module Creek
         raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? extension)
       end
       @files = Zip::ZipFile.open path
->>>>>>> 7161c30c5c78609e689a4e5e36bd3f2d5884684c
       @shared_strings = Creek::SharedStrings.new(self)
     end
 
