@@ -1,4 +1,4 @@
-require 'zip/zipfilesystem'
+require 'zip/filesystem'
 require 'nokogiri'
 
 module Creek
