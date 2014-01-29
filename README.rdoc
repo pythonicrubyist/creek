@@ -48,7 +48,7 @@ Creek can parse this directly without the need for file upload gems such as Carr
     # Import endpoint in Rails controller
     def import
       file = params[:file]
-      Creek::Book.new file[:path], file[:original_filename]
+      Creek::Book.new file.path, check_file_extension: false
     end
 
 == Contributing
