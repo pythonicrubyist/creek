@@ -16,14 +16,14 @@ module Creek
         raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? extension)
       end
       @files = Zip::File.open path
-      @shared_strings = Creek::SharedStrings.new(self)
+      @shared_strings = SharedStrings.new(self)
     end
 
     def sheets
       doc = @files.file.open "xl/workbook.xml"
       xml = Nokogiri::XML::Document.parse doc
       @sheets = xml.css('sheet').each_with_index.map  do |sheet, i|
-        Creek::Sheet.new(self, sheet.attr("name"), sheet.attr("sheetid"),  sheet.attr("state"), sheet.attr("visible"), sheet.attr("r:id"), i+1)
+        Sheet.new(self, sheet.attr("name"), sheet.attr("sheetid"),  sheet.attr("state"), sheet.attr("visible"), sheet.attr("r:id"), i+1)
       end
     end
 
