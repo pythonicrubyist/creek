@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="6" uniqueCount="5">
+    <si>
+        <t>Cell A1</t>
+    </si>
+    <si>
+        <t>Cell B1</t>
+    </si>
+    <si>
+        <t>My Cell</t>
+    </si>
+    <si>
+        <r>
+            <rPr>
+                <sz val="11"/>
+                <color rgb="FFFF0000"/>
+                <rFont val="Calibri"/>
+                <family val="2"/>
+                <scheme val="minor"/>
+            </rPr>
+            <t>Cell</t>
+        </r>
+        <r>
+            <rPr>
+                <sz val="11"/>
+                <color theme="1"/>
+                <rFont val="Calibri"/>
+                <family val="2"/>
+                <scheme val="minor"/>
+            </rPr>
+            <t xml:space="preserve"> </t>
+        </r>
+        <r>
+            <rPr>
+                <b/>
+                <sz val="11"/>
+                <color theme="1"/>
+                <rFont val="Calibri"/>
+                <family val="2"/>
+                <scheme val="minor"/>
+            </rPr>
+            <t>A2</t>
+        </r>
+    </si>
+    <si>
+        <r>
+            <rPr>
+                <sz val="11"/>
+                <color rgb="FF00B0F0"/>
+                <rFont val="Calibri"/>
+                <family val="2"/>
+                <scheme val="minor"/>
+            </rPr>
+            <t>Cell</t>
+        </r>
+        <r>
+            <rPr>
+                <sz val="11"/>
+                <color theme="1"/>
+                <rFont val="Calibri"/>
+                <family val="2"/>
+                <scheme val="minor"/>
+            </rPr>
+            <t xml:space="preserve"> </t>
+        </r>
+        <r>
+            <rPr>
+                <i/>
+                <sz val="11"/>
+                <color theme="1"/>
+                <rFont val="Calibri"/>
+                <family val="2"/>
+                <scheme val="minor"/>
+            </rPr>
+            <t>B2</t>
+        </r>
+    </si>
+</sst>
