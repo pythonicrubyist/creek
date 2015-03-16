@@ -65,6 +65,8 @@ module Creek
         closer = Nokogiri::XML::Reader::TYPE_END_ELEMENT
         Enumerator.new do |y|
           shared, row, cells, cell = false, nil, {}, nil
+          cell_type  = nil
+          cell_style_idx = nil
           @book.files.file.open(path) do |xml|
             Nokogiri::XML::Reader.from_io(xml).each do |node|
               if (node.name.eql? 'row') and (node.node_type.eql? opener)
@@ -78,19 +80,28 @@ module Creek
                 y << (include_meta_data ? row : processed_cells)
               elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
                   shared = node.attribute('t').eql? 's'
-                  cell = node.attribute('r')
+                cell_type      = node.attribute('t')
+                cell_style_idx = node.attribute('s')
+                cell           = node.attribute('r')
+
               elsif node.value?
-                if shared
-                  cells[cell] = @book.shared_strings.dictionary[node.value.to_i] if @book.shared_strings.dictionary.has_key? node.value.to_i
-                else
-                  cells[cell] = node.value
-                end
+                cells[cell] = convert(node.value, cell_type, cell_style_idx)
               end
             end
           end
         end
       end
     end
+
+    def convert(value, type, style_idx)
+      style = @book.style_types[style_idx.to_i]
+      Creek::Styles::Converter.call(value, type, style, converter_options)
+    end
+
+    def converter_options
+      @converter_options ||= {shared_strings: @book.shared_strings.dictionary}
+    end
+
     ##
     # The unzipped XML file does not contain any node for empty cells.
     # Empty cells are being padded in using this function

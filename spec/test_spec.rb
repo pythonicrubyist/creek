@@ -1,4 +1,4 @@
-require 'creek'
+require './spec/spec_helper'
 
 describe 'Creek trying to parsing an invalid file.' do
   it 'Fail to open a legacy xls file.' do

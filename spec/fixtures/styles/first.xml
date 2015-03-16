@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+    <numFmts count="2">
+        <numFmt numFmtId="164" formatCode="GENERAL" />
+        <numFmt numFmtId="165" formatCode="MM/DD/YYYY" />
+    </numFmts>
+    <fonts count="6">
+        <font>
+            <sz val="11" />
+            <color rgb="FF000000" />
+            <name val="Calibri" />
+            <family val="2" />
+            <charset val="1" />
+        </font>
+        <font>
+            <sz val="10" />
+            <name val="Arial" />
+            <family val="0" />
+        </font>
+        <font>
+            <sz val="10" />
+            <name val="Arial" />
+            <family val="0" />
+        </font>
+        <font>
+            <sz val="10" />
+            <name val="Arial" />
+            <family val="0" />
+        </font>
+        <font><b val="true" />
+            <sz val="12" />
+            <color rgb="FFFFFFFF" />
+            <name val="Calibri" />
+            <family val="2" />
+            <charset val="1" />
+        </font>
+        <font><b val="true" />
+            <sz val="11" />
+            <color rgb="FF000000" />
+            <name val="Calibri" />
+            <family val="2" />
+            <charset val="1" />
+        </font>
+    </fonts>
+    <fills count="4">
+        <fill>
+            <patternFill patternType="none" />
+        </fill>
+        <fill>
+            <patternFill patternType="gray125" />
+        </fill>
+        <fill>
+            <patternFill patternType="solid">
+                <fgColor rgb="FF090948" />
+                <bgColor rgb="FF000080" />
+            </patternFill>
+        </fill>
+        <fill>
+            <patternFill patternType="solid">
+                <fgColor rgb="FFDCE6F2" />
+                <bgColor rgb="FFCCFFFF" />
+            </patternFill>
+        </fill>
+    </fills>
+    <borders count="2">
+        <border diagonalUp="false" diagonalDown="false">
+            <left/>
+            <right/>
+            <top/>
+            <bottom/>
+            <diagonal/>
+        </border>
+        <border diagonalUp="false" diagonalDown="false">
+            <left style="thin" />
+            <right style="thin" />
+            <top style="thin" />
+            <bottom style="thin" />
+            <diagonal/>
+        </border>
+    </borders>
+    <cellStyleXfs count="20">
+        <xf numFmtId="164" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="true" applyAlignment="true" applyProtection="true">
+            <alignment horizontal="general" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="0" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="2" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="2" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="43" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="41" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="44" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="42" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+        <xf numFmtId="9" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf>
+    </cellStyleXfs>
+    <cellXfs count="8">
+        <xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyFont="false" applyBorder="false" applyAlignment="false" applyProtection="false">
+            <alignment horizontal="general" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="164" fontId="4" fillId="2" borderId="1" xfId="0" applyFont="true" applyBorder="true" applyAlignment="true" applyProtection="false">
+            <alignment horizontal="center" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="164" fontId="4" fillId="2" borderId="0" xfId="0" applyFont="true" applyBorder="true" applyAlignment="true" applyProtection="false">
+            <alignment horizontal="center" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="165" fontId="4" fillId="2" borderId="0" xfId="0" applyFont="true" applyBorder="true" applyAlignment="true" applyProtection="false">
+            <alignment horizontal="center" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="164" fontId="5" fillId="3" borderId="0" xfId="0" applyFont="true" applyBorder="true" applyAlignment="true" applyProtection="false">
+            <alignment horizontal="general" vertical="center" textRotation="0" wrapText="true" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyFont="true" applyBorder="true" applyAlignment="true" applyProtection="false">
+            <alignment horizontal="left" vertical="center" textRotation="0" wrapText="true" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false">
+            <alignment horizontal="general" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+        <xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyFont="false" applyBorder="true" applyAlignment="false" applyProtection="false">
+            <alignment horizontal="general" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false" />
+            <protection locked="true" hidden="false" />
+        </xf>
+    </cellXfs>
+    <cellStyles count="6">
+        <cellStyle name="Normal" xfId="0" builtinId="0" customBuiltin="false" />
+        <cellStyle name="Comma" xfId="15" builtinId="3" customBuiltin="false" />
+        <cellStyle name="Comma [0]" xfId="16" builtinId="6" customBuiltin="false" />
+        <cellStyle name="Currency" xfId="17" builtinId="4" customBuiltin="false" />
+        <cellStyle name="Currency [0]" xfId="18" builtinId="7" customBuiltin="false" />
+        <cellStyle name="Percent" xfId="19" builtinId="5" customBuiltin="false" />
+    </cellStyles>
+    <colors>
+        <indexedColors>
+            <rgbColor rgb="FF000000" />
+            <rgbColor rgb="FFFFFFFF" />
+            <rgbColor rgb="FFFF0000" />
+            <rgbColor rgb="FF00FF00" />
+            <rgbColor rgb="FF0000FF" />
+            <rgbColor rgb="FFFFFF00" />
+            <rgbColor rgb="FFFF00FF" />
+            <rgbColor rgb="FF00FFFF" />
+            <rgbColor rgb="FF800000" />
+            <rgbColor rgb="FF008000" />
+            <rgbColor rgb="FF090948" />
+            <rgbColor rgb="FF808000" />
+            <rgbColor rgb="FF800080" />
+            <rgbColor rgb="FF008080" />
+            <rgbColor rgb="FFC0C0C0" />
+            <rgbColor rgb="FF808080" />
+            <rgbColor rgb="FF9999FF" />
+            <rgbColor rgb="FF993366" />
+            <rgbColor rgb="FFFFFFCC" />
+            <rgbColor rgb="FFDCE6F2" />
+            <rgbColor rgb="FF660066" />
+            <rgbColor rgb="FFFF8080" />
+            <rgbColor rgb="FF0066CC" />
+            <rgbColor rgb="FFCCCCFF" />
+            <rgbColor rgb="FF000080" />
+            <rgbColor rgb="FFFF00FF" />
+            <rgbColor rgb="FFFFFF00" />
+            <rgbColor rgb="FF00FFFF" />
+            <rgbColor rgb="FF800080" />
+            <rgbColor rgb="FF800000" />
+            <rgbColor rgb="FF008080" />
+            <rgbColor rgb="FF0000FF" />
+            <rgbColor rgb="FF00CCFF" />
+            <rgbColor rgb="FFCCFFFF" />
+            <rgbColor rgb="FFCCFFCC" />
+            <rgbColor rgb="FFFFFF99" />
+            <rgbColor rgb="FF99CCFF" />
+            <rgbColor rgb="FFFF99CC" />
+            <rgbColor rgb="FFCC99FF" />
+            <rgbColor rgb="FFFFCC99" />
+            <rgbColor rgb="FF3366FF" />
+            <rgbColor rgb="FF33CCCC" />
+            <rgbColor rgb="FF99CC00" />
+            <rgbColor rgb="FFFFCC00" />
+            <rgbColor rgb="FFFF9900" />
+            <rgbColor rgb="FFFF6600" />
+            <rgbColor rgb="FF666699" />
+            <rgbColor rgb="FF969696" />
+            <rgbColor rgb="FF003366" />
+            <rgbColor rgb="FF339966" />
+            <rgbColor rgb="FF003300" />
+            <rgbColor rgb="FF333300" />
+            <rgbColor rgb="FF993300" />
+            <rgbColor rgb="FF993366" />
+            <rgbColor rgb="FF333399" />
+            <rgbColor rgb="FF333333" />
+        </indexedColors>
+    </colors>
+</styleSheet>

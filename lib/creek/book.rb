@@ -27,6 +27,10 @@ module Creek
       end
     end
 
+    def style_types
+      @style_types ||= Creek::Styles.new(self).style_types
+    end
+
     def close
       @files.close
     end
