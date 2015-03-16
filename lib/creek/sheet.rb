@@ -85,7 +85,9 @@ module Creek
                 cell           = node.attribute('r')
 
               elsif node.value?
-                cells[cell] = convert(node.value, cell_type, cell_style_idx)
+                if !cell.nil?
+                  cells[cell] = convert(node.value, cell_type, cell_style_idx)
+                end
               end
             end
           end

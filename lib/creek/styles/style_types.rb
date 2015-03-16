@@ -80,10 +80,6 @@ module Creek
 
         return :unsupported
       end
-
-      def self.cast(value, type, style, options = {})
-        Creek::Styles::Converter.call(value, type, style, options)
-      end
     end
   end
 end
