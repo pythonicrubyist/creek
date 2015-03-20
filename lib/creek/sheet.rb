@@ -79,10 +79,9 @@ module Creek
                 row['cells'] = processed_cells
                 y << (include_meta_data ? row : processed_cells)
               elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
-                  shared = node.attribute('t').eql? 's'
-                cell_type      = node.attribute('t')
-                cell_style_idx = node.attribute('s')
-                cell           = node.attribute('r')
+                cell_type      = node.attributes['t']
+                cell_style_idx = node.attributes['s']
+                cell           = node.attributes['r']
 
               elsif node.value?
                 if !cell.nil?
