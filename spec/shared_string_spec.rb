@@ -1,4 +1,4 @@
-require 'creek'
+require './spec/spec_helper'
 
 describe 'shared strings' do
 
