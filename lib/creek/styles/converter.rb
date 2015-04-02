@@ -1,3 +1,5 @@
+require 'set'
+
 module Creek
   class Styles
     class Converter
