@@ -24,9 +24,9 @@ module Creek
 
       # An XLS file has only 256 columns, however, an XLSX or XLSM file can contain up to 16384 columns.
       # This function creates a hash with all valid XLSX column names and associated indices.
-      @@excel_col_names = Hash.new
+      @excel_col_names = Hash.new
       (0...16384).each do |i|
-        @@excel_col_names[col_name(i)] = i
+        @excel_col_names[col_name(i)] = i
       end
     end
 
@@ -111,7 +111,7 @@ module Creek
       unless cells.empty?
         keys = cells.keys.sort
         last_col = last_col.gsub(row_number, '')
-        last_col_index = @@excel_col_names[last_col]
+        last_col_index = @excel_col_names[last_col]
         [*(0..last_col_index)].each do |i|
           col = col_name i
           id = "#{col}#{row_number}"
