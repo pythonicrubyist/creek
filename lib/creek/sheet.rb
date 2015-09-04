@@ -83,9 +83,9 @@ module Creek
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
 
-              elsif node.value?
+              elsif (node.name.eql? 'v') and (node.node_type.eql? opener)
                 if !cell.nil?
-                  cells[cell] = convert(node.value, cell_type, cell_style_idx)
+                  cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
                 end
               end
             end
