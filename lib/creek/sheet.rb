@@ -13,14 +13,14 @@ module Creek
                 :index
 
 
-    def initialize book, name, sheetid, state, visible, rid, index
+    def initialize book, name, sheetid, state, visible, rid, sheetfile
       @book = book
       @name = name
       @sheetid = sheetid
       @visible = visible
       @rid = rid
       @state = state
-      @index = index
+      @sheetfile = sheetfile
 
       # An XLS file has only 256 columns, however, an XLSX or XLSM file can contain up to 16384 columns.
       # This function creates a hash with all valid XLSX column names and associated indices.
@@ -57,7 +57,7 @@ module Creek
     # Returns a hash per row that includes the cell ids and values.
     # Empty cells will be also included in the hash with a nil value.
     def rows_generator include_meta_data=false
-      path = "xl/worksheets/sheet#{@index}.xml"
+      path = "xl/#{@sheetfile}"
       if @book.files.file.exist?(path)
         # SAX parsing, Each element in the stream comes through as two events:
         # one to open the element and one to close it.

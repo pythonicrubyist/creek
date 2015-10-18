@@ -22,8 +22,11 @@ module Creek
     def sheets
       doc = @files.file.open "xl/workbook.xml"
       xml = Nokogiri::XML::Document.parse doc
-      @sheets = xml.css('sheet').each_with_index.map  do |sheet, i|
-        Sheet.new(self, sheet.attr("name"), sheet.attr("sheetid"),  sheet.attr("state"), sheet.attr("visible"), sheet.attr("r:id"), i+1)
+      rels_doc = @files.file.open "xl/_rels/workbook.xml.rels"
+      rels = Nokogiri::XML::Document.parse(rels_doc).css("Relationship")
+      @sheets = xml.css('sheet').map do |sheet|
+        sheetfile = rels.find { |el| sheet.attr("r:id") == el.attr("Id") }.attr("Target")
+        Sheet.new(self, sheet.attr("name"), sheet.attr("sheetid"),  sheet.attr("state"), sheet.attr("visible"), sheet.attr("r:id"), sheetfile)
       end
     end
 
