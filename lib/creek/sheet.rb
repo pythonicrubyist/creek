@@ -49,7 +49,7 @@ module Creek
     # Returns valid Excel column name for a given column index.
     # For example, returns "A" for 0, "B" for 1 and "AQ" for 42.
     def col_name i
-      quot = i/26
+      quot = (i/26).floor
       (quot>0 ? col_name(quot-1) : "") + (i%26+65).chr
     end
 
