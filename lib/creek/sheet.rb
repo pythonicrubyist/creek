@@ -85,7 +85,10 @@ module Creek
     end
 
     def converter_options
-      @converter_options ||= {shared_strings: @book.shared_strings.dictionary}
+      @converter_options ||= {
+        shared_strings: @book.shared_strings.dictionary,
+        base_date: @book.base_date
+      }
     end
 
     ##

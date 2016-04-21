@@ -1,5 +1,6 @@
 require 'zip/filesystem'
 require 'nokogiri'
+require 'date'
 
 module Creek
 
@@ -8,6 +9,9 @@ module Creek
     attr_reader :files,
                 :sheets,
                 :shared_strings
+
+    DATE_1900 = Date.new(1899, 12, 30).freeze
+    DATE_1904 = Date.new(1904, 1, 1).freeze
 
     def initialize path, options = {}
       check_file_extension = options.fetch(:check_file_extension, true)
@@ -36,6 +40,27 @@ module Creek
 
     def close
       @files.close
+    end
+
+    def base_date
+      @base_date ||=
+      begin
+        # Default to 1900 (minus one day due to excel quirk) but use 1904 if
+        # it's set in the Workbook's workbookPr
+        # http://msdn.microsoft.com/en-us/library/ff530155(v=office.12).aspx
+        result = DATE_1900 # default
+
+        doc = @files.file.open "xl/workbook.xml"
+        xml = Nokogiri::XML::Document.parse doc
+        xml.css('workbookPr[date1904]').each do |workbookPr|
+          if workbookPr['date1904'] =~ /true|1/i
+            result = DATE_1904
+            break
+          end
+        end
+
+        result
+      end
     end
   end
 end
