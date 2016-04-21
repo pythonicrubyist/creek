@@ -81,7 +81,7 @@ module Creek
         fraction_of_24               = value - days_since_date_system_start
 
         # http://stackoverflow.com/questions/10559767/how-to-convert-ms-excel-date-from-float-to-date-format-in-ruby
-        date = options.fetch(:base_date, DATE_SYSTEM_1900) + days_since_date_system_start
+        date = options.fetch(:base_date, Date.new(1899, 12, 30)) + days_since_date_system_start
 
         if fraction_of_24 > 0 # there is a time associated
           seconds = (fraction_of_24 * 86400).round

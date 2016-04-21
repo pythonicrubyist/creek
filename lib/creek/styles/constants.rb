@@ -1,5 +1,3 @@
-require 'date'
-
 module Creek
   class Styles
     module Constants
@@ -38,9 +36,6 @@ module Creek
         48 => :bignum,         # ##0.0E+0
         49 => :unsupported     # @
       }
-
-      DATE_SYSTEM_1900 = Date.new(1899, 12, 30)
-      DATE_SYSTEM_1904 = Date.new(1904, 1, 1)
     end
   end
 end
