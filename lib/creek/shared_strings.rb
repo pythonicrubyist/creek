@@ -30,11 +30,13 @@ module Creek
 
       xml.css('si').each_with_index do |si, idx|
         text_nodes = si.css('t')
-        if text_nodes.count == 1 # plain text node
-          dictionary[idx] = text_nodes.first.content
-        else # rich text nodes with text fragments
-          dictionary[idx] = text_nodes.map(&:content).join('')
-        end
+        text = if text_nodes.count == 1 # plain text node
+                 text_nodes.first.content
+               else # rich text nodes with text fragments
+                 text_nodes.map(&:content).join('')
+               end
+
+        dictionary[idx] = Creek::Styles::Converter.unescape_string(text)
       end
 
       dictionary
