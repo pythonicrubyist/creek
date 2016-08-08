@@ -53,6 +53,7 @@ module Creek
           row, cells, cell = nil, {}, nil
           cell_type  = nil
           cell_style_idx = nil
+          inlineStr = nil
           @book.files.file.open(path) do |xml|
             Nokogiri::XML::Reader.from_io(xml).each do |node|
               if (node.name.eql? 'row') and (node.node_type.eql? opener)
@@ -68,7 +69,12 @@ module Creek
                 cell_type      = node.attributes['t']
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
-              elsif (node.name.eql? 'v') and (node.node_type.eql? opener)
+              elsif (node.name.eql? 'is') and (node.node_type.eql? opener) and cell_type == 'inlineStr'
+                inlineStr = true
+              elsif (node.name.eql? 'is') and (node.node_type.eql? closer) and cell_type == 'inlineStr'
+                inlineStr = false
+              elsif ((node.name.eql? 'v') and (node.node_type.eql? opener)) or
+                  ((node.name.eql? 't') and inlineStr and (node.node_type.eql? opener))
                 unless cell.nil?
                   cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
                 end
