@@ -1,4 +1,5 @@
 require 'set'
+require 'htmlentities'
 
 module Creek
   class Styles
@@ -45,16 +46,18 @@ module Creek
         when 'b'
           value.to_i == 1
         when 'str'
-          value
+          convert_html_entities(value)
         when 'inlineStr'
-          value
+          convert_html_entities(value)
 
         ##
         # Type can also be determined by a style,
         # detected earlier and cast here by its standardized symbol
         ##
 
-        when :string, :unsupported
+        when :string
+          convert_html_entities(value)
+        when :unsupported
           value
         when :fixnum
           value.to_i
@@ -71,6 +74,10 @@ module Creek
         else
           value
         end
+      end
+
+      def self.convert_html_entities( value )
+        HTMLEntities.new.decode value
       end
 
       # the trickiest. note that  all these formats can vary on
