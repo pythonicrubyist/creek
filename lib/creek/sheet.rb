@@ -23,6 +23,11 @@ module Creek
       @sheetfile = sheetfile
     end
 
+    def with_images
+      @drawing = Creek::Drawing.new(@book, @sheetfile)
+      @images_present = @drawing.has_images?
+    end
+
     ##
     # Provides an Enumerator that returns a hash representing each row.
     # The key of the hash is the Cell id and the value is the value of the cell.
@@ -68,9 +73,17 @@ module Creek
                 cell_type      = node.attributes['t']
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
+                if node.value.nil? && @images_present
+                  cells[cell] = find_images(cell)
+                end
               elsif (node.name.eql? 'v') and (node.node_type.eql? opener)
                 unless cell.nil?
-                  cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
+                  cell_value = convert(node.inner_xml, cell_type, cell_style_idx)
+                  if cell_value.to_s.empty? && @images_present
+                    cells[cell] = find_images(cell)
+                  else
+                    cells[cell] = cell_value
+                  end
                 end
               end
             end
@@ -107,6 +120,10 @@ module Creek
       end
 
       new_cells
+    end
+
+    def find_images(cell)
+      @drawing.images_at(cell)
     end
   end
 end
