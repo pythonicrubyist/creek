@@ -1,7 +1,7 @@
 require 'pathname'
 
 module Creek
-  class Drawing
+  class Creek::Drawing
     include Creek::Utils
 
     COLUMNS = ('A'..'AZ').to_a
