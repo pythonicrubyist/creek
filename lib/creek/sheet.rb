@@ -26,6 +26,11 @@ module Creek
     def with_images
       @drawing = Creek::Drawing.new(@book, @sheetfile)
       @images_present = @drawing.has_images?
+      self
+    end
+
+    def images_at(cell)
+      @drawing.images_at(cell)
     end
 
     ##
@@ -67,23 +72,23 @@ module Creek
                 y << (include_meta_data ? row : cells) if node.self_closing?
               elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
                 processed_cells = fill_in_empty_cells(cells, row['r'], cell)
+
+                if @images_present
+                  processed_cells.each do |cell_name, cell_value|
+                    next unless cell_value.nil?
+                    processed_cells[cell_name] = images_at(cell_name)
+                  end
+                end
+
                 row['cells'] = processed_cells
                 y << (include_meta_data ? row : processed_cells)
               elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
                 cell_type      = node.attributes['t']
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
-                if node.value.nil? && @images_present
-                  cells[cell] = find_images(cell)
-                end
               elsif (node.name.eql? 'v') and (node.node_type.eql? opener)
                 unless cell.nil?
-                  cell_value = convert(node.inner_xml, cell_type, cell_style_idx)
-                  if cell_value.to_s.empty? && @images_present
-                    cells[cell] = find_images(cell)
-                  else
-                    cells[cell] = cell_value
-                  end
+                  cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
                 end
               end
             end
@@ -120,10 +125,6 @@ module Creek
       end
 
       new_cells
-    end
-
-    def find_images(cell)
-      @drawing.images_at(cell)
     end
   end
 end

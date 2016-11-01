@@ -8,18 +8,22 @@ module Creek
     def initialize(book, sheetfile)
       @book = book
       @sheetfile = sheetfile
+      @images_pathnames = Hash.new { |hash, key| hash[key] = [] }
+
       load_drawings_and_rels
-      initialize_images_pathnames_by_cells
+      load_images_pathnames_by_cells if has_images?
     end
 
     def has_images?
-      @has_images ||= @drawings.size > 0
+      @has_images ||= !@drawings.nil? && @drawings.size > 0
     end
 
     def images_at(cell_name)
       coordinate = calc_coordinate(cell_name)
+      pathnames_at_coordinate = @images_pathnames[coordinate]
+      return if pathnames_at_coordinate.empty?
 
-      @images_pathnames[coordinate].map do |image_pathname|
+      pathnames_at_coordinate.map do |image_pathname|
          if image_pathname.exist?
            image_pathname
          else
@@ -44,7 +48,10 @@ module Creek
     end
 
     def load_drawings_and_rels
-      drawing_filepath = extract_drawing_filepath.sub('..', 'xl')
+      drawing_filepath = extract_drawing_filepath
+      return if drawing_filepath.nil?
+
+      drawing_filepath.sub!('..', 'xl')
       @drawings = load_drawings(drawing_filepath)
       @drawings_rels = load_drawings_rels(drawing_filepath)
     end
@@ -61,7 +68,10 @@ module Creek
     def extract_drawing_filepath
       # read drawing relationship ID from the sheet
       sheet_filepath = "xl/#{@sheetfile}"
-      drawing_rid = parse_xml(sheet_filepath).css('drawing').first.attributes['id'].value
+      drawing = parse_xml(sheet_filepath).css('drawing').first
+      return if drawing.nil?
+
+      drawing_rid = drawing.attributes['id'].value
 
       # read sheet rels to find drawing file location
       sheet_rels_filepath = expand_to_rels_path(sheet_filepath)
@@ -77,9 +87,7 @@ module Creek
       Nokogiri::XML::Document.parse(doc)
     end
 
-    def initialize_images_pathnames_by_cells
-      @images_pathnames = Hash.new { |hash, key| hash[key] = [] }
-
+    def load_images_pathnames_by_cells
       image_selector = 'xdr:pic/xdr:blipFill/a:blip'.freeze
       row_from_selector = 'xdr:from/xdr:row'.freeze
       row_to_selector = 'xdr:to/xdr:row'.freeze
