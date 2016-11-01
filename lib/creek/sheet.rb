@@ -3,6 +3,7 @@ require 'nokogiri'
 
 module Creek
   class Creek::Sheet
+    include Creek::Utils
 
     attr_reader :book,
                 :name,
@@ -21,14 +22,19 @@ module Creek
       @rid = rid
       @state = state
       @sheetfile = sheetfile
+      @images_present = false
     end
 
     ##
     # Preloads images info (coordinates and paths) from related drawing.xml and drawing rels.
     # Must be called before #rows method if you want to have images included.
+    # Returns self so you can chain the calls (sheet.with_images.rows).
     def with_images
-      @drawing = Creek::Drawing.new(@book, @sheetfile)
-      @images_present = @drawing.has_images?
+      @drawingfile = extract_drawing_filepath
+      if @drawingfile
+        @drawing = Creek::Drawing.new(@book, @drawingfile.sub('..', 'xl'))
+        @images_present = @drawing.has_images?
+      end
       self
     end
 
@@ -132,6 +138,23 @@ module Creek
       end
 
       new_cells
+    end
+
+    ##
+    # Find drawing filepath for the current sheet.
+    # Sheet xml contains drawing relationship ID.
+    # Sheet relationships xml contains drawing file's location.
+    def extract_drawing_filepath
+      # Read drawing relationship ID from the sheet.
+      sheet_filepath = "xl/#{@sheetfile}"
+      drawing = parse_xml(sheet_filepath).css('drawing').first
+      return if drawing.nil?
+
+      drawing_rid = drawing.attributes['id'].value
+
+      # Read sheet rels to find drawing file's location.
+      sheet_rels_filepath = expand_to_rels_path(sheet_filepath)
+      parse_xml(sheet_rels_filepath).css("Relationship[@Id='#{drawing_rid}']").first.attributes['Target'].value
     end
   end
 end
