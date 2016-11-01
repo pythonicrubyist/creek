@@ -23,14 +23,21 @@ module Creek
       @sheetfile = sheetfile
     end
 
+    ##
+    # Preloads images info (coordinates and paths) from related drawing.xml and drawing rels.
+    # Must be called before #rows method if you want to have images included.
     def with_images
       @drawing = Creek::Drawing.new(@book, @sheetfile)
       @images_present = @drawing.has_images?
       self
     end
 
+    ##
+    # Extracts images for a cell to a temporary folder.
+    # Returns array of Pathnames for the cell.
+    # Returns nil if images asre not found for the cell or images were not preloaded with #with_images.
     def images_at(cell)
-      @drawing.images_at(cell)
+      @drawing.images_at(cell) if @images_present
     end
 
     ##
