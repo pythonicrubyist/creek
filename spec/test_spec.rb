@@ -32,7 +32,8 @@ describe 'Creek parsing a sample XLSX file' do
                     {'A4'=>'Content 7', 'B4'=>'Content 8', 'C4'=>'Content 9', 'D4'=>'Content 10', 'E4'=>'Content 11', 'F4'=>'Content 12'},
                     {'A5'=>nil, 'B5'=>nil, 'C5'=>nil, 'D5'=>nil, 'E5'=>nil, 'F5'=>nil, 'G5'=>nil, 'H5'=>nil, 'I5'=>nil, 'J5'=>nil, 'K5'=>nil, 'L5'=>nil, 'M5'=>nil, 'N5'=>nil, 'O5'=>nil, 'P5'=>nil, 'Q5'=>nil, 'R5'=>nil, 'S5'=>nil, 'T5'=>nil, 'U5'=>nil, 'V5'=>nil, 'W5'=>nil, 'X5'=>nil, 'Y5'=>nil, 'Z5'=>'Z Content', 'AA5'=>nil, 'AB5'=>nil, 'AC5'=>nil, 'AD5'=>nil, 'AE5'=>nil, 'AF5'=>nil, 'AG5'=>nil, 'AH5'=>nil, 'AI5'=>nil, 'AJ5'=>nil, 'AK5'=>nil, 'AL5'=>nil, 'AM5'=>nil, 'AN5'=>nil, 'AO5'=>nil, 'AP5'=>nil, 'AQ5'=>nil, 'AR5'=>nil, 'AS5'=>nil, 'AT5'=>nil, 'AU5'=>nil, 'AV5'=>nil, 'AW5'=>nil, 'AX5'=>nil, 'AY5'=>nil, 'AZ5'=>'Content 13'},
                     {'A6'=>'1', 'B6'=>'2', 'C6'=>'3'}, {'A7'=>'Content 15', 'B7'=>'Content 16', 'C7'=>'Content 18', 'D7'=>'Content 19'},
-                    {'A8'=>nil, 'B8'=>'Content 20', 'C8'=>nil, 'D8'=>nil, 'E8'=>nil, 'F8'=>'Content 21'}]
+                    {'A8'=>nil, 'B8'=>'Content 20', 'C8'=>nil, 'D8'=>nil, 'E8'=>nil, 'F8'=>'Content 21'},
+                    {'A10' => 0.15, 'B10' => 0.15}]
   end
 
   after(:all) do
@@ -67,7 +68,8 @@ describe 'Creek parsing a sample XLSX file' do
     rows[5].should == @expected_rows[5]
     rows[6].should == @expected_rows[6]
     rows[7].should == @expected_rows[7]
-    row_count.should == 8
+    rows[8].should == @expected_rows[8]
+    row_count.should == 9
   end
 
   it 'Parse rows with empty cells and meta data successfully.' do
