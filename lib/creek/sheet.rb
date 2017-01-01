@@ -3,6 +3,7 @@ require 'nokogiri'
 
 module Creek
   class Creek::Sheet
+    include Creek::Utils
 
     attr_reader :book,
                 :name,
@@ -21,6 +22,28 @@ module Creek
       @rid = rid
       @state = state
       @sheetfile = sheetfile
+      @images_present = false
+    end
+
+    ##
+    # Preloads images info (coordinates and paths) from related drawing.xml and drawing rels.
+    # Must be called before #rows method if you want to have images included.
+    # Returns self so you can chain the calls (sheet.with_images.rows).
+    def with_images
+      @drawingfile = extract_drawing_filepath
+      if @drawingfile
+        @drawing = Creek::Drawing.new(@book, @drawingfile.sub('..', 'xl'))
+        @images_present = @drawing.has_images?
+      end
+      self
+    end
+
+    ##
+    # Extracts images for a cell to a temporary folder.
+    # Returns array of Pathnames for the cell.
+    # Returns nil if images asre not found for the cell or images were not preloaded with #with_images.
+    def images_at(cell)
+      @drawing.images_at(cell) if @images_present
     end
 
     ##
@@ -62,6 +85,14 @@ module Creek
                 y << (include_meta_data ? row : cells) if node.self_closing?
               elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
                 processed_cells = fill_in_empty_cells(cells, row['r'], cell)
+
+                if @images_present
+                  processed_cells.each do |cell_name, cell_value|
+                    next unless cell_value.nil?
+                    processed_cells[cell_name] = images_at(cell_name)
+                  end
+                end
+
                 row['cells'] = processed_cells
                 y << (include_meta_data ? row : processed_cells)
               elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
@@ -107,6 +138,23 @@ module Creek
       end
 
       new_cells
+    end
+
+    ##
+    # Find drawing filepath for the current sheet.
+    # Sheet xml contains drawing relationship ID.
+    # Sheet relationships xml contains drawing file's location.
+    def extract_drawing_filepath
+      # Read drawing relationship ID from the sheet.
+      sheet_filepath = "xl/#{@sheetfile}"
+      drawing = parse_xml(sheet_filepath).css('drawing').first
+      return if drawing.nil?
+
+      drawing_rid = drawing.attributes['id'].value
+
+      # Read sheet rels to find drawing file's location.
+      sheet_rels_filepath = expand_to_rels_path(sheet_filepath)
+      parse_xml(sheet_rels_filepath).css("Relationship[@Id='#{drawing_rid}']").first.attributes['Target'].value
     end
   end
 end
