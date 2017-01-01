@@ -58,10 +58,8 @@ module Creek
           value
         when :fixnum
           value.to_i
-        when :float
+        when :float, :percentage
           value.to_f
-        when :percentage
-          value.to_f / 100
         when :date, :time, :date_time
           convert_date(value, options)
         when :bignum
