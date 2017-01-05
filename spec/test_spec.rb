@@ -15,6 +15,14 @@ describe 'Creek trying to parsing an invalid file.' do
     open_book.should raise_error 'Not a valid file format.'
   end
 
+  it 'Fail to open remote file' do
+    lambda { Creek::Book.new 'http://dev-builds.libreoffice.org/tmp/test.xlsx' }.should raise_error
+  end
+
+  it 'Opens remote file with remote flag' do
+    lambda { Creek::Book.new 'http://dev-builds.libreoffice.org/tmp/test.xlsx', remote: true }.should_not raise_error
+  end
+
   it 'Check file extension of original_filename if passed.' do
     path = 'spec/fixtures/temp_string_io_file_path_with_no_extension'
     lambda { Creek::Book.new path, :original_filename => 'invalid.xls' }.should raise_error 'Not a valid file format.'
