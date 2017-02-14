@@ -1,7 +1,7 @@
 require 'zip/filesystem'
 require 'nokogiri'
 require 'date'
-require 'open-uri'
+require 'httparty'
 
 module Creek
 
@@ -20,8 +20,14 @@ module Creek
         extension = File.extname(options[:original_filename] || path).downcase
         raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? extension)
       end
-      path = open(path) if options[:remote]
-      @files = Zip::File.open path
+      if options[:remote]
+        zipfile = Tempfile.new("file")
+        zipfile.binmode
+        zipfile.write(HTTParty.get(path).body)
+        zipfile.close
+        path = zipfile.path
+      end
+      @files = Zip::File.open(path)
       @shared_strings = SharedStrings.new(self)
     end
 
