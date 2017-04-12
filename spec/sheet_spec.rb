@@ -56,7 +56,7 @@ describe 'sheet' do
     context 'with excel without images' do
       it 'does not break on with_images' do
         rows = sheet_no_images.with_images.rows.map { |r| r }
-        expect(load_cell(rows, 'A10')).to eq(nil)
+        expect(load_cell(rows, 'A10')).to eq(0.15)
       end
     end
   end
