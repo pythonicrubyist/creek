@@ -34,9 +34,19 @@ module Creek
     def sheets
       doc = @files.file.open "xl/workbook.xml"
       xml = Nokogiri::XML::Document.parse doc
+      namespaces = xml.namespaces
+
+      cssPrefix = ''
+      namespaces.each do |namespace|
+        if namespace[1] == 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' && namespace[0] != 'xmlns' then 
+          cssPrefix = namespace[0].split(':')[1]+'|'
+          puts cssPrefix
+        end
+      end
+
       rels_doc = @files.file.open "xl/_rels/workbook.xml.rels"
       rels = Nokogiri::XML::Document.parse(rels_doc).css("Relationship")
-      @sheets = xml.css('sheet').map do |sheet|
+      @sheets = xml.css(cssPrefix+'sheet').map do |sheet|
         sheetfile = rels.find { |el| sheet.attr("r:id") == el.attr("Id") }.attr("Target")
         Sheet.new(self, sheet.attr("name"), sheet.attr("sheetid"),  sheet.attr("state"), sheet.attr("visible"), sheet.attr("r:id"), sheetfile)
       end
