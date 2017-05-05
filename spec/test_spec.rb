@@ -54,15 +54,15 @@ describe 'Creek parsing a sample XLSX file' do
   end
 
   it 'open an XLSX file successfully.' do
-    @creek.should_not be_nil
+    expect(@creek).not_to be_nil
   end
 
   it 'find sheets successfully.' do
-    @creek.sheets.count.should == 1
+    expect(@creek.sheets.count).to eq(1)
     sheet = @creek.sheets.first
-    sheet.state.should eql nil
-    sheet.name.should eql 'Sheet1'
-    sheet.rid.should eql 'rId1'
+    expect(sheet.state).to eql nil
+    expect(sheet.name).to eql 'Sheet1'
+    expect(sheet.rid).to eql 'rId1'
   end
 
   it 'Parse rows with empty cells successfully.' do
@@ -73,16 +73,16 @@ describe 'Creek parsing a sample XLSX file' do
       row_count += 1
     end
 
-    rows[0].should == @expected_rows[0]
-    rows[1].should == @expected_rows[1]
-    rows[2].should == @expected_rows[2]
-    rows[3].should == @expected_rows[3]
-    rows[4].should == @expected_rows[4]
-    rows[5].should == @expected_rows[5]
-    rows[6].should == @expected_rows[6]
-    rows[7].should == @expected_rows[7]
-    rows[8].should == @expected_rows[8]
-    row_count.should == 9
+    expect(rows[0]).to eq(@expected_rows[0])
+    expect(rows[1]).to eq(@expected_rows[1])
+    expect(rows[2]).to eq(@expected_rows[2])
+    expect(rows[3]).to eq(@expected_rows[3])
+    expect(rows[4]).to eq(@expected_rows[4])
+    expect(rows[5]).to eq(@expected_rows[5])
+    expect(rows[6]).to eq(@expected_rows[6])
+    expect(rows[7]).to eq(@expected_rows[7])
+    expect(rows[8]).to eq(@expected_rows[8])
+    expect(row_count).to eq(9)
   end
 
   it 'Parse rows with empty cells and meta data successfully.' do
@@ -92,6 +92,6 @@ describe 'Creek parsing a sample XLSX file' do
       rows << row
       row_count += 1
     end
-    rows.map{|r| r['cells']}.should == @expected_rows
+    expect(rows.map{|r| r['cells']}).to eq(@expected_rows)
   end
 end
