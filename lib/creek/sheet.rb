@@ -66,7 +66,7 @@ module Creek
     # Returns a hash per row that includes the cell ids and values.
     # Empty cells will be also included in the hash with a nil value.
     def rows_generator include_meta_data=false
-      path = "xl/#{@sheetfile}"
+      path = if @sheetfile.start_with? "/xl/" or @sheetfile.start_with? "xl/" then @sheetfile else "xl/#{@sheetfile}" end
       if @book.files.file.exist?(path)
         # SAX parsing, Each element in the stream comes through as two events:
         # one to open the element and one to close it.
