@@ -7,9 +7,9 @@ describe Creek::Styles::StyleTypes do
       xml_file = File.open('spec/fixtures/styles/first.xml')
       doc      = Nokogiri::XML(xml_file)
       res      = Creek::Styles::StyleTypes.new(doc).call
-      res.size.should == 8
-      res[3].should == :date_time
-      res.should == [:unsupported, :unsupported, :unsupported, :date_time, :unsupported, :unsupported, :unsupported, :unsupported]
+      expect(res.size).to eq(8)
+      expect(res[3]).to eq(:date_time)
+      expect(res).to eq([:unsupported, :unsupported, :unsupported, :date_time, :unsupported, :unsupported, :unsupported, :unsupported])
     end
   end
 end

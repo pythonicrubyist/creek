@@ -9,7 +9,7 @@ describe Creek::Styles::Converter do
 
     describe :date_time do
       it "works" do
-        convert('41275', 'n', :date_time).should == Date.new(2013,01,01)
+        expect(convert('41275', 'n', :date_time)).to eq(Date.new(2013,01,01))
       end
     end
   end
