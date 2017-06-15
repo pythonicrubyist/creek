@@ -38,9 +38,8 @@ module Creek
 
       cssPrefix = ''
       namespaces.each do |namespace|
-        if namespace[1] == 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' && namespace[0] != 'xmlns' then 
+        if namespace[1] == 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' && namespace[0] != 'xmlns' then
           cssPrefix = namespace[0].split(':')[1]+'|'
-          puts cssPrefix
         end
       end
 
