@@ -34,12 +34,12 @@ module Creek
       return if pathnames_at_coordinate.empty?
 
       pathnames_at_coordinate.map do |image_pathname|
-         if image_pathname.exist?
-           image_pathname
-         else
-           excel_image_path = "xl/media/#{image_pathname.to_path.split(tmpdir).last}"
-           IO.copy_stream(@book.files.file.open(excel_image_path), image_pathname.to_path)
-           image_pathname
+        if image_pathname.exist?
+          image_pathname
+        else
+          excel_image_path = "xl/media#{image_pathname.to_path.split(tmpdir).last}"
+          IO.copy_stream(@book.files.file.open(excel_image_path), image_pathname.to_path)
+          image_pathname
          end
       end
     end
@@ -87,7 +87,7 @@ module Creek
         next if embed.nil?
 
         rid = embed.value
-        path = Pathname.new("#{tmpdir}#{extract_drawing_path(rid).slice(/[^\/]*$/)}")
+        path = Pathname.new("#{tmpdir}/#{extract_drawing_path(rid).slice(/[^\/]*$/)}")
 
         row_from = drawing.xpath(row_from_selector).text.to_i
         col_from = drawing.xpath(col_from_selector).text.to_i
