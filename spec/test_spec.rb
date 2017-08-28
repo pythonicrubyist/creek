@@ -17,16 +17,6 @@ describe 'Creek trying to parsing an invalid file.' do
       .to raise_error 'Not a valid file format.'
   end
 
-  it 'Fail to open remote file' do
-    expect { Creek::Book.new 'http://dev-builds.libreoffice.org/tmp/test.xlsx' }
-      .to raise_error(Zip::Error, /not found/)
-  end
-
-  it 'Opens remote file with remote flag' do
-    expect { Creek::Book.new 'http://dev-builds.libreoffice.org/tmp/test.xlsx', remote: true }
-      .not_to raise_error
-  end
-
   it 'Check file extension of original_filename if passed.' do
     path = 'spec/fixtures/temp_string_io_file_path_with_no_extension'
     expect { Creek::Book.new path, :original_filename => 'invalid.xls' }
