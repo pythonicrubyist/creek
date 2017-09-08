@@ -22,7 +22,7 @@ Creek can simply parse an Excel file by looping through the rows enumerator:
 
 ```ruby
 require 'creek'
-creek = Creek::Book.new 'specs/fixtures/sample.xlsx'
+creek = Creek::Book.new 'spec/fixtures/sample.xlsx'
 sheet = creek.sheets[0]
 
 sheet.rows.each do |row|
