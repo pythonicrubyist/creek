@@ -15,19 +15,23 @@ module Creek
     DATE_1904 = Date.new(1904, 1, 1).freeze
 
     def initialize path, options = {}
-      check_file_extension = options.fetch(:check_file_extension, true)
-      if check_file_extension
-        extension = File.extname(options[:original_filename] || path).downcase
-        raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? extension)
+      if path.respond_to?(:readlines) # Both IO/StringIO
+        @files = Zip::File.open_buffer(path)
+      else
+        check_file_extension = options.fetch(:check_file_extension, true)
+        if check_file_extension
+          extension = File.extname(options[:original_filename] || path).downcase
+          raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? extension)
+        end
+        if options[:remote]
+          zipfile = Tempfile.new("file")
+          zipfile.binmode
+          zipfile.write(HTTParty.get(path).body)
+          zipfile.close
+          path = zipfile.path
+        end
+        @files = Zip::File.open(path)
       end
-      if options[:remote]
-        zipfile = Tempfile.new("file")
-        zipfile.binmode
-        zipfile.write(HTTParty.get(path).body)
-        zipfile.close
-        path = zipfile.path
-      end
-      @files = Zip::File.open(path)
       @shared_strings = SharedStrings.new(self)
     end
 
