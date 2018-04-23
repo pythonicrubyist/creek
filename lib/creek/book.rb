@@ -1,7 +1,7 @@
 require 'zip/filesystem'
 require 'nokogiri'
 require 'date'
-require 'httparty'
+require 'http'
 
 module Creek
 
@@ -23,7 +23,7 @@ module Creek
       if options[:remote]
         zipfile = Tempfile.new("file")
         zipfile.binmode
-        zipfile.write(HTTParty.get(path).body)
+        zipfile.write(HTTP.get(path).to_s)
         zipfile.close
         path = zipfile.path
       end
