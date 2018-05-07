@@ -60,8 +60,10 @@ module Creek
           value.to_i
         when :float, :percentage
           value.to_f
-        when :date, :time, :date_time
+        when :date
           convert_date(value, options)
+        when :time, :date_time
+          convert_datetime(value, options)
         when :bignum
           convert_bignum(value)
 
@@ -71,22 +73,17 @@ module Creek
         end
       end
 
-      # the trickiest. note that  all these formats can vary on
-      # whether they actually contain a date, time, or datetime.
       def self.convert_date(value, options)
-        value                        = value.to_f
-        days_since_date_system_start = value.to_i
-        fraction_of_24               = value - days_since_date_system_start
+        date = base_date(options) + value.to_i
+        yyyy, mm, dd = date.strftime('%Y-%m-%d').split('-')
 
-        # http://stackoverflow.com/questions/10559767/how-to-convert-ms-excel-date-from-float-to-date-format-in-ruby
-        date = options.fetch(:base_date, Date.new(1899, 12, 30)) + days_since_date_system_start
+        ::Date.new(yyyy.to_i, mm.to_i, dd.to_i)
+      end
 
-        if fraction_of_24 > 0 # there is a time associated
-          seconds = (fraction_of_24 * 86400).round
-          return Time.utc(date.year, date.month, date.day) + seconds
-        else
-          return date
-        end
+      def self.convert_datetime(value, options)
+        date = base_date(options) + value.to_f.round(6)
+
+        round_datetime(date.strftime('%Y-%m-%d %H:%M:%S.%N'))
       end
 
       def self.convert_bignum(value)
@@ -96,6 +93,18 @@ module Creek
           value.to_f
         end
       end
+
+      private
+
+        def self.base_date(options)
+          options.fetch(:base_date, Date.new(1899, 12, 30))
+        end
+
+        def self.round_datetime(datetime_string)
+          /(?<yyyy>\d+)-(?<mm>\d+)-(?<dd>\d+) (?<hh>\d+):(?<mi>\d+):(?<ss>\d+.\d+)/ =~ datetime_string
+
+          ::Time.new(yyyy.to_i, mm.to_i, dd.to_i, hh.to_i, mi.to_i, ss.to_r).round(0)
+        end
     end
   end
 end

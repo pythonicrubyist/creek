@@ -26,6 +26,35 @@ describe 'Creek trying to parsing an invalid file.' do
   end
 end
 
+describe 'Creek parsing dates on a sample XLSX file' do
+  before(:all) do
+    @creek = Creek::Book.new 'spec/fixtures/sample_dates.xlsx'
+
+    @expected_datetime_rows = [
+      {'A3' => 'Date', 'B3' => Date.parse('2018-01-01')},
+      {'A4' => 'Date', 'B4' => Time.parse('2018-11-05 10:59:59')},
+      {'A5' => 'Date', 'B5' => Time.parse('2018-06-30')}]
+  end
+
+  after(:all) do
+    @creek.close
+  end
+
+  it 'parses dates successfully' do
+    rows = Array.new
+    row_count = 0
+    @creek.sheets[0].rows.each do |row|
+      rows << row
+      row_count += 1
+    end
+
+    (2..5).each do |number|
+      puts rows[number]
+      expect(rows[number]).to eq(@expected_datetime_rows[number-2])
+    end
+  end
+end
+
 describe 'Creek parsing a sample XLSX file' do
   before(:all) do
     @creek = Creek::Book.new 'spec/fixtures/sample.xlsx'
@@ -37,6 +66,11 @@ describe 'Creek parsing a sample XLSX file' do
                     {'A6'=>'1', 'B6'=>'2', 'C6'=>'3'}, {'A7'=>'Content 15', 'B7'=>'Content 16', 'C7'=>'Content 18', 'D7'=>'Content 19'},
                     {'A8'=>nil, 'B8'=>'Content 20', 'C8'=>nil, 'D8'=>nil, 'E8'=>nil, 'F8'=>'Content 21'},
                     {'A10' => 0.15, 'B10' => 0.15}]
+
+    @expected_datetime_rows = [
+      {'A1' => DateTime.parse('2018-07-01 00:00:00')},
+      {'A2' => DateTime.parse('2018-11-05 10:59:59')},
+      {'A3' => Date.parse('2018-06-30')}]
   end
 
   after(:all) do
@@ -63,15 +97,9 @@ describe 'Creek parsing a sample XLSX file' do
       row_count += 1
     end
 
-    expect(rows[0]).to eq(@expected_rows[0])
-    expect(rows[1]).to eq(@expected_rows[1])
-    expect(rows[2]).to eq(@expected_rows[2])
-    expect(rows[3]).to eq(@expected_rows[3])
-    expect(rows[4]).to eq(@expected_rows[4])
-    expect(rows[5]).to eq(@expected_rows[5])
-    expect(rows[6]).to eq(@expected_rows[6])
-    expect(rows[7]).to eq(@expected_rows[7])
-    expect(rows[8]).to eq(@expected_rows[8])
+    (0..8).each do |number|
+      expect(rows[number]).to eq(@expected_rows[number])
+    end
     expect(row_count).to eq(9)
   end
 
