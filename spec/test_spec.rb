@@ -31,9 +31,9 @@ describe 'Creek parsing dates on a sample XLSX file' do
     @creek = Creek::Book.new 'spec/fixtures/sample_dates.xlsx'
 
     @expected_datetime_rows = [
-      {'A3' => 'Date', 'B3' => Date.parse('2018-01-01')},
-      {'A4' => 'Date', 'B4' => Time.parse('2018-11-05 10:59:59')},
-      {'A5' => 'Date', 'B5' => Time.parse('2018-06-30')}]
+      {'A3' => 'Date',              'B3' => Date.parse('2018-01-01')},
+      {'A4' => 'Datetime 00:00:00', 'B4' => Time.parse('2018-01-01 00:00:00')},
+      {'A5' => 'Datetime',          'B5' => Time.parse('2018-01-01 23:59:59')}]
   end
 
   after(:all) do
@@ -49,7 +49,6 @@ describe 'Creek parsing dates on a sample XLSX file' do
     end
 
     (2..5).each do |number|
-      puts rows[number]
       expect(rows[number]).to eq(@expected_datetime_rows[number-2])
     end
   end
@@ -66,11 +65,6 @@ describe 'Creek parsing a sample XLSX file' do
                     {'A6'=>'1', 'B6'=>'2', 'C6'=>'3'}, {'A7'=>'Content 15', 'B7'=>'Content 16', 'C7'=>'Content 18', 'D7'=>'Content 19'},
                     {'A8'=>nil, 'B8'=>'Content 20', 'C8'=>nil, 'D8'=>nil, 'E8'=>nil, 'F8'=>'Content 21'},
                     {'A10' => 0.15, 'B10' => 0.15}]
-
-    @expected_datetime_rows = [
-      {'A1' => DateTime.parse('2018-07-01 00:00:00')},
-      {'A2' => DateTime.parse('2018-11-05 10:59:59')},
-      {'A3' => Date.parse('2018-06-30')}]
   end
 
   after(:all) do
