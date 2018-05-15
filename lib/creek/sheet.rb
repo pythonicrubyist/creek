@@ -11,7 +11,8 @@ module Creek
                 :state,
                 :visible,
                 :rid,
-                :index
+                :index,
+                :sheetfile
 
 
     def initialize book, name, sheetid, state, visible, rid, sheetfile
@@ -21,7 +22,7 @@ module Creek
       @visible = visible
       @rid = rid
       @state = state
-      @sheetfile = sheetfile
+      @sheetfile = normalize_sheetfile_path(sheetfile)
       @images_present = false
     end
 
@@ -30,11 +31,14 @@ module Creek
     # Must be called before #rows method if you want to have images included.
     # Returns self so you can chain the calls (sheet.with_images.rows).
     def with_images
-      @drawingfile = extract_drawing_filepath
-      if @drawingfile
-        @drawing = Creek::Drawing.new(@book, @drawingfile.sub('..', 'xl'))
+      drawing_file = extract_drawing_filepath
+
+      drawing_filepath = drawing_file.sub('..', 'xl') if drawing_file
+      if file_exist?(drawing_filepath)
+        @drawing = Creek::Drawing.new(@book, drawing_filepath)
         @images_present = @drawing.has_images?
       end
+
       self
     end
 
@@ -62,12 +66,28 @@ module Creek
 
     private
 
+    #
+    # Document representing worksheet
+    #
+    # @return [Creek::Document] worksheet
+    #
+    def document
+      @document ||= Document.new(book, sheetfile)
+    end
+
+    def normalize_sheetfile_path(sheetfile)
+      if sheetfile.start_with? '/xl/' or sheetfile.start_with? 'xl/'
+        sheetfile
+      else
+        "xl/#{sheetfile}"
+      end
+    end
+
     ##
     # Returns a hash per row that includes the cell ids and values.
     # Empty cells will be also included in the hash with a nil value.
     def rows_generator include_meta_data=false
-      path = if @sheetfile.start_with? "/xl/" or @sheetfile.start_with? "xl/" then @sheetfile else "xl/#{@sheetfile}" end
-      if @book.files.file.exist?(path)
+      if @book.files.file.exist?(sheetfile)
         # SAX parsing, Each element in the stream comes through as two events:
         # one to open the element and one to close it.
         opener = Nokogiri::XML::Reader::TYPE_ELEMENT
@@ -76,14 +96,15 @@ module Creek
           row, cells, cell = nil, {}, nil
           cell_type  = nil
           cell_style_idx = nil
-          @book.files.file.open(path) do |xml|
+          @book.files.file.open(sheetfile) do |xml|
             Nokogiri::XML::Reader.from_io(xml).each do |node|
-              if (node.name.eql? 'row') and (node.node_type.eql? opener)
+              node_name = node.name.split(':').last
+              if (node_name.eql? 'row') and (node.node_type.eql? opener)
                 row = node.attributes
                 row['cells'] = Hash.new
                 cells = Hash.new
                 y << (include_meta_data ? row : cells) if node.self_closing?
-              elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
+              elsif (node_name.eql? 'row') and (node.node_type.eql? closer)
                 processed_cells = fill_in_empty_cells(cells, row['r'], cell)
 
                 if @images_present
@@ -95,15 +116,15 @@ module Creek
 
                 row['cells'] = processed_cells
                 y << (include_meta_data ? row : processed_cells)
-              elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
+              elsif (node_name.eql? 'c') and (node.node_type.eql? opener)
                 cell_type      = node.attributes['t']
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
-              elsif (node.name.eql? 'v') and (node.node_type.eql? opener)
+              elsif (node_name.eql? 'v') and (node.node_type.eql? opener)
                 unless cell.nil?
                   cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
                 end
-              elsif (node.name.eql? 't') and (node.node_type.eql? opener)
+              elsif (node_name.eql? 't') and (node.node_type.eql? opener)
                 unless cell.nil?
                   cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
                 end
@@ -150,15 +171,13 @@ module Creek
     # Sheet relationships xml contains drawing file's location.
     def extract_drawing_filepath
       # Read drawing relationship ID from the sheet.
-      sheet_filepath = "xl/#{@sheetfile}"
-      drawing = parse_xml(sheet_filepath).css('drawing').first
+      drawing = document.css(['drawing']).first
       return if drawing.nil?
 
       drawing_rid = drawing.attributes['id'].value
 
       # Read sheet rels to find drawing file's location.
-      sheet_rels_filepath = expand_to_rels_path(sheet_filepath)
-      parse_xml(sheet_rels_filepath).css("Relationship[@Id='#{drawing_rid}']").first.attributes['Target'].value
+      document.relationships.css("Relationship[@Id='#{drawing_rid}']").first.attributes['Target'].value
     end
   end
 end

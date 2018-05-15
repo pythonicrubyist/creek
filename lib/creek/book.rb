@@ -31,22 +31,16 @@ module Creek
       @shared_strings = SharedStrings.new(self)
     end
 
+    #
+    # List of xlsx worksheets
+    #
+    # @return [Array<Creek::Sheet>] worksheets array
+    #
     def sheets
-      doc = @files.file.open "xl/workbook.xml"
-      xml = Nokogiri::XML::Document.parse doc
-      namespaces = xml.namespaces
-
-      cssPrefix = ''
-      namespaces.each do |namespace|
-        if namespace[1] == 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' && namespace[0] != 'xmlns' then
-          cssPrefix = namespace[0].split(':')[1]+'|'
-        end
-      end
-
-      rels_doc = @files.file.open "xl/_rels/workbook.xml.rels"
-      rels = Nokogiri::XML::Document.parse(rels_doc).css("Relationship")
-      @sheets = xml.css(cssPrefix+'sheet').map do |sheet|
-        sheetfile = rels.find { |el| sheet.attr("r:id") == el.attr("Id") }.attr("Target")
+      @sheets = document.css(['sheet']).map do |sheet|
+        sheetfile = document.relationships
+          .css("Relationship[@Id=#{sheet.attr('r:id')}]")
+          .first.attributes['Target'].value
         Sheet.new(self, sheet.attr("name"), sheet.attr("sheetid"),  sheet.attr("state"), sheet.attr("visible"), sheet.attr("r:id"), sheetfile)
       end
     end
@@ -60,24 +54,24 @@ module Creek
     end
 
     def base_date
-      @base_date ||=
-      begin
+      @base_date ||= begin
         # Default to 1900 (minus one day due to excel quirk) but use 1904 if
         # it's set in the Workbook's workbookPr
         # http://msdn.microsoft.com/en-us/library/ff530155(v=office.12).aspx
-        result = DATE_1900 # default
 
-        doc = @files.file.open "xl/workbook.xml"
-        xml = Nokogiri::XML::Document.parse doc
-        xml.css('workbookPr[date1904]').each do |workbookPr|
-          if workbookPr['date1904'] =~ /true|1/i
-            result = DATE_1904
-            break
-          end
-        end
-
-        result
+        workbook_pr_1904 = document.css(['workbookPr[date1904]'])
+          .find { |w_pr| w_pr['date1904'] =~ /true|1/i }
+        workbook_pr_1904.nil? ? DATE_1900 : DATE_1904
       end
+    end
+
+    #
+    # Document representing workbook
+    #
+    # @return [Creek::Document] workbook
+    #
+    def document
+      @workbook ||= Document.new(self, 'xl/workbook.xml')
     end
   end
 end

@@ -9,18 +9,19 @@ module Creek
       "xl/styles.xml"
     end
 
-    def styles_xml
-      @styles_xml ||= begin
-        if @book.files.file.exist?(path)
-          doc = @book.files.file.open path
-          Nokogiri::XML::Document.parse doc
-        end
-      end
+    #
+    # Document representing styles file
+    #
+    # @return [Creek::Document] styles file
+    #
+    def document
+      return unless @book.files.file.exist?(path)
+      Document.new(book, path)
     end
 
     def style_types
       @style_types ||= begin
-        Creek::Styles::StyleTypes.new(styles_xml).call
+        Creek::Styles::StyleTypes.new(document).call
       end
     end
   end

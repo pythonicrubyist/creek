@@ -25,7 +25,7 @@ module Creek
       # type.
       def call
         @style_types ||= begin
-          styles_xml_doc.css('styleSheet cellXfs xf').map do |xstyle|
+          styles_xml_doc.css(%w[styleSheet cellXfs xf]).map do |xstyle|
             a = num_fmt_id(xstyle)
             style_type_by_num_fmt_id( a )
           end
@@ -56,7 +56,7 @@ module Creek
       # ex. {164 => :date_time}
       def custom_style_types
         @custom_style_types ||= begin
-          styles_xml_doc.css('styleSheet numFmts numFmt').inject({}) do |acc, xstyle|
+          styles_xml_doc.css(%w[styleSheet numFmts numFmt]).inject({}) do |acc, xstyle|
             index      = xstyle.attributes['numFmtId'].value.to_i
             value      = xstyle.attributes['formatCode'].value
             acc[index] = determine_custom_style_type(value)
