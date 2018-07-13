@@ -1,3 +1,7 @@
+
+[![version](https://badge.fury.io/rb/creek.svg)](https://badge.fury.io/rb/creek)
+[![rubygems.org](https://ruby-gem-downloads-badge.herokuapp.com/creek?type=total&total_label=downloads)](https://ruby-gem-downloads-badge.herokuapp.com/creek?type=total&total_label=downloads)
+
 # Creek - Stream parser for large Excel (xlsx and xlsm) files.
 
 Creek is a Ruby gem that provides a fast, simple and efficient method of parsing large Excel (xlsx and xlsm) files.
