@@ -54,6 +54,27 @@ describe 'Creek parsing dates on a sample XLSX file' do
   end
 end
 
+describe 'Creek parsing a file with large numbrts.' do
+  before(:all) do
+    @creek = Creek::Book.new 'spec/fixtures/large_numbers.xlsx'
+    @expected_simple_rows = [{"A"=>"7.83294732E8", "B"=>"783294732", "C"=>783294732.0}]
+  end
+
+  after(:all) do
+    @creek.close
+  end
+
+  it 'Parse simple rows successfully.' do
+    rows = Array.new
+    row_count = 0
+    @creek.sheets[0].simple_rows.each do |row|
+      rows << row
+      row_count += 1
+    end
+    expect(rows[0]).to eq(@expected_simple_rows[0])
+  end
+end
+
 describe 'Creek parsing a sample XLSX file' do
   before(:all) do
     @creek = Creek::Book.new 'spec/fixtures/sample.xlsx'

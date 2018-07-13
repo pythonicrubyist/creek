@@ -54,8 +54,10 @@ module Creek
         # detected earlier and cast here by its standardized symbol
         ##
 
-        when :string, :unsupported
+        when :string
           value
+        when :unsupported
+          convert_unknown(value)
         when :fixnum
           value.to_i
         when :float, :percentage
@@ -69,7 +71,23 @@ module Creek
 
         ## Nothing matched
         else
-          value
+          convert_unknown(value)
+        end
+      end
+      
+      def self.convert_unknown(value)
+        begin
+          if value.nil? or value.empty?
+            return value
+          elsif value.to_i.to_s == value.to_s
+            return value.to_i
+          elsif value.to_f.to_s == value.to_s
+            return value.to_f
+          else
+            return value
+          end
+        rescue
+          return value
         end
       end
 
