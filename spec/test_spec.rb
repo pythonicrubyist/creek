@@ -65,6 +65,16 @@ describe 'Creek parsing a sample XLSX file' do
                     {'A6'=>'1', 'B6'=>'2', 'C6'=>'3'}, {'A7'=>'Content 15', 'B7'=>'Content 16', 'C7'=>'Content 18', 'D7'=>'Content 19'},
                     {'A8'=>nil, 'B8'=>'Content 20', 'C8'=>nil, 'D8'=>nil, 'E8'=>nil, 'F8'=>'Content 21'},
                     {'A10' => 0.15, 'B10' => 0.15}]
+
+    @expected_simple_rows = [{"A"=>"Content 1", "B"=>nil, "C"=>"Content 2", "D"=>nil, "E"=>"Content 3"},
+                    {"A"=>nil, "B"=>"Content 4", "C"=>nil, "D"=>"Content 5", "E"=>nil, "F"=>"Content 6"},
+                    {},
+                    {"A"=>"Content 7", "B"=>"Content 8", "C"=>"Content 9", "D"=>"Content 10", "E"=>"Content 11", "F"=>"Content 12"},
+                    {"A"=>nil, "B"=>nil, "C"=>nil, "D"=>nil, "E"=>nil, "F"=>nil, "G"=>nil, "H"=>nil, "I"=>nil, "J"=>nil, "K"=>nil, "L"=>nil, "M"=>nil, "N"=>nil, "O"=>nil, "P"=>nil, "Q"=>nil, "R"=>nil, "S"=>nil, "T"=>nil, "U"=>nil, "V"=>nil, "W"=>nil, "X"=>nil, "Y"=>nil, "Z"=>"Z Content", "AA"=>nil, "AB"=>nil, "AC"=>nil, "AD"=>nil, "AE"=>nil, "AF"=>nil, "AG"=>nil, "AH"=>nil, "AI"=>nil, "AJ"=>nil, "AK"=>nil, "AL"=>nil, "AM"=>nil, "AN"=>nil, "AO"=>nil, "AP"=>nil, "AQ"=>nil, "AR"=>nil, "AS"=>nil, "AT"=>nil, "AU"=>nil, "AV"=>nil, "AW"=>nil, "AX"=>nil, "AY"=>nil, "AZ"=>"Content 13"},
+                    {"A"=>"1", "B"=>"2", "C"=>"3"},
+                    {"A"=>"Content 15", "B"=>"Content 16", "C"=>"Content 18", "D"=>"Content 19"},
+                    {"A"=>nil, "B"=>"Content 20", "C"=>nil, "D"=>nil, "E"=>nil, "F"=>"Content 21"},
+                    {"A"=>0.15, "B"=>0.15}]
   end
 
   after(:all) do
@@ -82,6 +92,20 @@ describe 'Creek parsing a sample XLSX file' do
     expect(sheet.name).to eql 'Sheet1'
     expect(sheet.rid).to eql 'rId1'
   end
+
+  it 'Parse simple rows successfully.' do
+    rows = Array.new
+    row_count = 0
+    @creek.sheets[0].simple_rows.each do |row|
+      rows << row
+      row_count += 1
+    end
+    (0..8).each do |number|
+      expect(rows[number]).to eq(@expected_simple_rows[number])
+    end
+    expect(row_count).to eq(9)
+  end
+
 
   it 'Parse rows with empty cells successfully.' do
     rows = Array.new

@@ -26,11 +26,19 @@ creek = Creek::Book.new 'spec/fixtures/sample.xlsx'
 sheet = creek.sheets[0]
 
 sheet.rows.each do |row|
-  puts row # => {"A1"=>"Content 1", "B1"=>nil, C1"=>nil, "D1"=>"Content 3"}
+  puts row # => {"A1"=>"Content 1", "B1"=>nil, "C1"=>nil, "D1"=>"Content 3"}
+end
+
+sheet.simple_rows.each do |row|
+  puts row # => {"A"=>"Content 1", "B"=>nil, "C"=>nil, "D"=>"Content 3"}
 end
 
 sheet.rows_with_meta_data.each do |row|
-  puts row # => {"collapsed"=>"false", "customFormat"=>"false", "customHeight"=>"true", "hidden"=>"false", "ht"=>"12.1", "outlineLevel"=>"0", "r"=>"1", "cells"=>{"A1"=>"Content 1", "B1"=>nil, C1"=>nil, "D1"=>"Content 3"}}
+  puts row # => {"collapsed"=>"false", "customFormat"=>"false", "customHeight"=>"true", "hidden"=>"false", "ht"=>"12.1", "outlineLevel"=>"0", "r"=>"1", "cells"=>{"A1"=>"Content 1", "B1"=>nil, "C1"=>nil, "D1"=>"Content 3"}}
+end
+
+sheet.simple_rows_with_meta_data.each do |row|
+  puts row # => {"collapsed"=>"false", "customFormat"=>"false", "customHeight"=>"true", "hidden"=>"false", "ht"=>"12.1", "outlineLevel"=>"0", "r"=>"1", "cells"=>{"A"=>"Content 1", "B"=>nil, "C"=>nil, "D"=>"Content 3"}}
 end
 
 sheet.state   # => 'visible'

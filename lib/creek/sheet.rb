@@ -46,18 +46,33 @@ module Creek
       @drawing.images_at(cell) if @images_present
     end
 
+
+    ##
+    # Provides an Enumerator that returns a hash representing each row.
+    # The key of the hash is the column ID and the value is the value of the cell.
+    def simple_rows
+      rows_generator false, true
+    end
+
     ##
     # Provides an Enumerator that returns a hash representing each row.
     # The key of the hash is the Cell id and the value is the value of the cell.
     def rows
-      rows_generator
+      rows_generator false, false
     end
 
     ##
     # Provides an Enumerator that returns a hash representing each row.
     # The hash contains meta data of the row and a 'cells' embended hash which contains the cell contents.
     def rows_with_meta_data
-      rows_generator true
+      rows_generator true, false
+    end
+
+    ##
+    # Provides an Enumerator that returns a hash representing each row.
+    # The hash contains meta data of the row and a 'cells' embended hash which contains the cell contents.
+    def simple_rows_with_meta_data
+      rows_generator true, true
     end
 
     private
@@ -65,7 +80,7 @@ module Creek
     ##
     # Returns a hash per row that includes the cell ids and values.
     # Empty cells will be also included in the hash with a nil value.
-    def rows_generator include_meta_data=false
+    def rows_generator include_meta_data=false, use_simple_rows_format=false
       path = if @sheetfile.start_with? "/xl/" or @sheetfile.start_with? "xl/" then @sheetfile else "xl/#{@sheetfile}" end
       if @book.files.file.exist?(path)
         # SAX parsing, Each element in the stream comes through as two events:
@@ -84,7 +99,7 @@ module Creek
                 cells = Hash.new
                 y << (include_meta_data ? row : cells) if node.self_closing?
               elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
-                processed_cells = fill_in_empty_cells(cells, row['r'], cell)
+                processed_cells = fill_in_empty_cells(cells, row['r'], cell, use_simple_rows_format)
 
                 if @images_present
                   processed_cells.each do |cell_name, cell_value|
@@ -99,13 +114,9 @@ module Creek
                 cell_type      = node.attributes['t']
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
-              elsif (node.name.eql? 'v') and (node.node_type.eql? opener)
+              elsif (['v', 't'].include? node.name) and (node.node_type.eql? opener)
                 unless cell.nil?
-                  cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
-                end
-              elsif (node.name.eql? 't') and (node.node_type.eql? opener)
-                unless cell.nil?
-                  cells[cell] = convert(node.inner_xml, cell_type, cell_style_idx)
+                  cells[(use_simple_rows_format ? cell.tr("0-9", "") : cell)] = convert(node.inner_xml, cell_type, cell_style_idx)
                 end
               end
             end
@@ -129,14 +140,14 @@ module Creek
     ##
     # The unzipped XML file does not contain any node for empty cells.
     # Empty cells are being padded in using this function
-    def fill_in_empty_cells(cells, row_number, last_col)
+    def fill_in_empty_cells(cells, row_number, last_col, use_simple_rows_format)
       new_cells = Hash.new
 
       unless cells.empty?
         last_col = last_col.gsub(row_number, '')
 
         ("A"..last_col).to_a.each do |column|
-          id = "#{column}#{row_number}"
+          id = use_simple_rows_format ? "#{column}" : "#{column}#{row_number}"
           new_cells[id] = cells[id]
         end
       end
