@@ -1,4 +1,3 @@
-
 [![version](https://badge.fury.io/rb/creek.svg)](https://badge.fury.io/rb/creek)
 [![rubygems.org](https://ruby-gem-downloads-badge.herokuapp.com/creek?type=total&total_label=downloads)](https://ruby-gem-downloads-badge.herokuapp.com/creek?type=total&total_label=downloads)
 
