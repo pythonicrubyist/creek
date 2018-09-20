@@ -4,6 +4,10 @@ module Creek
   class Styles
     class Converter
       include Creek::Styles::Constants
+
+      # Excel non-printable character escape sequence
+      HEX_ESCAPE_REGEXP = /_x[0-9A-Za-z]{4}_/
+
       ##
       # The heart of typecasting. The ruby type is determined either explicitly
       # from the cell xml or implicitly from the cell style, and this
@@ -45,9 +49,9 @@ module Creek
         when 'b'
           value.to_i == 1
         when 'str'
-          value
+          unescape_string(value)
         when 'inlineStr'
-          value
+          unescape_string(value)
 
         ##
         # Type can also be determined by a style,
@@ -110,6 +114,12 @@ module Creek
         else
           value.to_f
         end
+      end
+
+      def self.unescape_string(value)
+        # excel encodes some non-printable characters using a hex code in the format _xHHHH_
+        # e.g. Carriage Return (\r) is encoded as _x000D_
+        value.gsub(HEX_ESCAPE_REGEXP) { |match| match[2, 4].to_i(16).chr(Encoding::UTF_8) }
       end
 
       private
