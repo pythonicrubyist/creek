@@ -75,4 +75,7 @@
             <t>B2</t>
         </r>
     </si>
+    <si>
+        <t>Cell with_x000D_escaped_x000D_characters</t>
+    </si>
 </sst>
