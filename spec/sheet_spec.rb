@@ -3,13 +3,19 @@ require './spec/spec_helper'
 describe 'sheet' do
   let(:book_with_images) { Creek::Book.new('spec/fixtures/sample-with-images.xlsx') }
   let(:book_no_images) { Creek::Book.new('spec/fixtures/sample.xlsx') }
+  let(:book_escaped) { Creek::Book.new('spec/fixtures/escaped.xlsx') }
   let(:sheetfile) { 'worksheets/sheet1.xml' }
   let(:sheet_with_images) { Creek::Sheet.new(book_with_images, 'Sheet 1', 1, '', '', '1', sheetfile) }
   let(:sheet_no_images) { Creek::Sheet.new(book_no_images, 'Sheet 1', 1, '', '', '1', sheetfile) }
+  let(:sheet_escaped) { book_escaped.sheets[0] }
 
   def load_cell(rows, cell_name)
     cell = rows.find { |row| !row[cell_name].nil? }
     cell[cell_name] if cell
+  end
+
+  it 'does not escape ampersand' do
+    expect(sheet_escaped.rows.to_enum.map(&:values)).to eq([["abc", "def"], ["ghi", "j&k"]])
   end
 
   describe '#rows' do
