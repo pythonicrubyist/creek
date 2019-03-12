@@ -116,7 +116,8 @@ module Creek
                 cell           = node.attributes['r']
               elsif (['v', 't'].include? node.name) and (node.node_type.eql? opener)
                 unless cell.nil?
-                  cells[(use_simple_rows_format ? cell.tr("0-9", "") : cell)] = convert(node.inner_xml, cell_type, cell_style_idx)
+                  node.read
+                  cells[(use_simple_rows_format ? cell.tr("0-9", "") : cell)] = convert(node.value, cell_type, cell_style_idx)
                 end
               end
             end
