@@ -78,4 +78,14 @@
     <si>
         <t>Cell with_x000D_escaped_x000D_characters</t>
     </si>
+    <si>
+        <t>吉田兼好</t>
+        <rPh sb="0" eb="2">
+            <t xml:space="preserve">ヨシダ </t>
+        </rPh>
+        <rPh sb="2" eb="4">
+            <t xml:space="preserve">ケンコウ </t>
+        </rPh>
+        <phoneticPr fontId="1"/>
+    </si>
 </sst>

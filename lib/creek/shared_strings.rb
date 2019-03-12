@@ -29,7 +29,7 @@ module Creek
       dictionary = Hash.new
 
       xml.css('si').each_with_index do |si, idx|
-        text_nodes = si.css('t')
+        text_nodes = si.css('>t, r t')
         if text_nodes.count == 1 # plain text node
           dictionary[idx] = Creek::Styles::Converter.unescape_string(text_nodes.first.content)
         else # rich text nodes with text fragments
