@@ -12,6 +12,18 @@ describe 'sheet' do
     cell[cell_name] if cell
   end
 
+  context 'escaped ampersand' do
+    let(:book_escaped) { Creek::Book.new('spec/fixtures/escaped.xlsx') }
+    it 'does NOT escape ampersand' do
+      expect(book_escaped.sheets[0].rows.to_enum.map(&:values)).to eq([["abc", "def"], ["ghi", "j&k"]])
+    end
+
+    let(:book_escaped2) { Creek::Book.new('spec/fixtures/escaped2.xlsx') }
+    it 'does escape ampersand' do
+      expect(book_escaped2.sheets[0].rows.to_enum.map(&:values)).to eq([["abc", "def"], ["ghi", "j&k"]])
+    end
+  end
+
   describe '#rows' do
     context 'with excel with images' do
       context 'with images preloading' do
