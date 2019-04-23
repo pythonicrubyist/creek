@@ -93,13 +93,6 @@ puts sheet.images_at('C1') # => nil
 
 Creek will most likely return nil for a cell with images if there is no other text cell in that row - you can use *images_at* method for retrieving images in that cell.
 
-## Remote files
-
-```ruby
-remote_url = 'http://dev-builds.libreoffice.org/tmp/test.xlsx'
-Creek::Book.new remote_url, remote: true
-```
-
 ## Contributing
 
 Contributions are welcomed. You can fork a repository, add your code changes to the forked branch, ensure all existing unit tests pass, create new unit tests which cover your new changes and finally create a pull request.

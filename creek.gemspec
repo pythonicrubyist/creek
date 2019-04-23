@@ -27,5 +27,4 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'nokogiri', '>= 1.7.0'
   spec.add_dependency 'rubyzip', '>= 1.0.0'
-  spec.add_dependency 'http', '~> 4.0'
 end
