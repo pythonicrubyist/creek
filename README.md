@@ -118,6 +118,12 @@ Once this is complete, you should be able to run the test suite:
 rake
 ```
 
+There are some remote tests that are excluded by default. To run those, run
+
+```
+bundle exec rspec --tag remote
+```
+
 ## Bug Reporting
 
 Please use the [Issues](https://github.com/pythonicrubyist/creek/issues) page to report bugs or suggest new enhancements.
