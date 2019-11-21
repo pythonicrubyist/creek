@@ -54,7 +54,7 @@ describe 'Creek parsing dates on a sample XLSX file' do
   end
 end
 
-describe 'Creek parsing a file with large numbrts.' do
+describe 'Creek parsing a file with large numbers.' do
   before(:all) do
     @creek = Creek::Book.new 'spec/fixtures/large_numbers.xlsx'
     @expected_simple_rows = [{"A"=>"7.83294732E8", "B"=>"783294732", "C"=>783294732.0}]

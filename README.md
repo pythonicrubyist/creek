@@ -95,9 +95,19 @@ Creek will most likely return nil for a cell with images if there is no other te
 
 ## Remote files
 
+To download a remote file, use your favorite HTTP client to download to a
+temporary file. Here's an example:
+
 ```ruby
-remote_url = 'http://dev-builds.libreoffice.org/tmp/test.xlsx'
-Creek::Book.new remote_url, remote: true
+require 'http'
+
+zipfile = Tempfile.new("foo")
+zipfile.binmode
+zipfile.write(HTTP.get(path).to_s)
+zipfile.close
+path = zipfile.path
+
+Creek::Book.new path
 ```
 
 ## Contributing
