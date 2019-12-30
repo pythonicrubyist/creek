@@ -83,7 +83,9 @@ module Creek
       col_to_selector = 'xdr:to/xdr:col'.freeze
 
       @drawings.xpath('//xdr:twoCellAnchor').each do |drawing|
-        embed = drawing.xpath(image_selector).first.attributes['embed']
+        # embed = drawing.xpath(image_selector).first.attributes['embed']
+        temp = drawing.xpath(image_selector).first
+        embed = temp.attributes['embed'] if temp
         next if embed.nil?
 
         rid = embed.value
