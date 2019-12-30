@@ -1,7 +1,7 @@
 require 'zip/filesystem'
 require 'nokogiri'
 require 'date'
-require 'http'
+require 'open-uri'
 
 module Creek
 
@@ -20,13 +20,7 @@ module Creek
         extension = File.extname(options[:original_filename] || path).downcase
         raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? extension)
       end
-      if options[:remote]
-        zipfile = Tempfile.new("file")
-        zipfile.binmode
-        zipfile.write(HTTP.get(path).to_s)
-        zipfile.close
-        path = zipfile.path
-      end
+      path = download_file(path) if options[:remote]
       @files = Zip::File.open(path)
       @shared_strings = SharedStrings.new(self)
     end
@@ -77,6 +71,21 @@ module Creek
         end
 
         result
+      end
+    end
+
+    private
+
+    def download_file(url)
+      # OpenUri will return a StringIO if under OpenURI::Buffer::StringMax
+      # threshold, and a Tempfile if over.
+      downloaded = URI(url).open
+      if downloaded.is_a? StringIO
+        path = Tempfile.new(['creek-file', '.xlsx']).path
+        File.binwrite(path, downloaded.read)
+        path
+      else
+        downloaded.path
       end
     end
   end

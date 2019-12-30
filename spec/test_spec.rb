@@ -106,6 +106,20 @@ describe 'Creek parsing a sample XLSX file' do
     expect(@creek).not_to be_nil
   end
 
+  it 'opens small remote files successfully', remote: true do
+    url = 'https://file-examples.com/wp-content/uploads/2017/02/file_example_XLSX_10.xlsx'
+    @creek = Creek::Book.new(url, remote: true)
+
+    expect(@creek.sheets[0]).to be_a Creek::Sheet
+  end
+
+  it 'opens large remote files successfully', remote: true do
+    url = 'http://www.house.leg.state.mn.us/comm/docs/BanaianZooExample.xlsx'
+    @creek = Creek::Book.new(url, remote: true)
+
+    expect(@creek.sheets[0]).to be_a Creek::Sheet
+  end
+
   it 'find sheets successfully.' do
     expect(@creek.sheets.count).to eq(1)
     sheet = @creek.sheets.first
