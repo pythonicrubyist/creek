@@ -6,7 +6,7 @@ module Creek
       include Creek::Styles::Constants
 
       # Excel non-printable character escape sequence
-      HEX_ESCAPE_REGEXP = /_x[0-9A-Za-z]{4}_/
+      HEX_ESCAPE_REGEXP = /_x[0-9A-Fa-f]{4}_/
 
       ##
       # The heart of typecasting. The ruby type is determined either explicitly
