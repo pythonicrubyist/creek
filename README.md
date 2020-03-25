@@ -100,6 +100,14 @@ remote_url = 'http://dev-builds.libreoffice.org/tmp/test.xlsx'
 Creek::Book.new remote_url, remote: true
 ```
 
+## Mapping cells with header names
+By default, Creek will map cell names with letter and number(A1, B3 and etc). To be able to get cell values by header column name use ***with_headers*** (can be used only with ***#simple_rows*** method!!!) during creation *(Note: header column is first string of sheet)*
+
+```ruby
+creek = Creek::Book.new file.path, with_headers: true
+```
+
+
 ## Contributing
 
 Contributions are welcomed. You can fork a repository, add your code changes to the forked branch, ensure all existing unit tests pass, create new unit tests which cover your new changes and finally create a pull request.
