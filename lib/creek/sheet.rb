@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'zip/filesystem'
 require 'nokogiri'
 
@@ -48,7 +50,6 @@ module Creek
     def images_at(cell)
       @drawing.images_at(cell) if @images_present
     end
-
 
     ##
     # Provides an Enumerator that returns a hash representing each row.

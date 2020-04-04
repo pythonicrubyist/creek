@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'creek/version'
 require 'creek/book'
 require 'creek/styles/constants'
