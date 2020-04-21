@@ -4,12 +4,11 @@ require 'date'
 require 'open-uri'
 
 module Creek
-
   class Creek::Book
-
     attr_reader :files,
                 :sheets,
-                :shared_strings
+                :shared_strings,
+                :with_headers
 
     DATE_1900 = Date.new(1899, 12, 30).freeze
     DATE_1904 = Date.new(1904, 1, 1).freeze
@@ -23,6 +22,7 @@ module Creek
       path = download_file(path) if options[:remote]
       @files = Zip::File.open(path)
       @shared_strings = SharedStrings.new(self)
+      @with_headers = options.fetch(:with_headers, false)
     end
 
     def sheets
@@ -41,7 +41,17 @@ module Creek
       rels = Nokogiri::XML::Document.parse(rels_doc).css("Relationship")
       @sheets = xml.css(cssPrefix+'sheet').map do |sheet|
         sheetfile = rels.find { |el| sheet.attr("r:id") == el.attr("Id") }.attr("Target")
-        Sheet.new(self, sheet.attr("name"), sheet.attr("sheetid"),  sheet.attr("state"), sheet.attr("visible"), sheet.attr("r:id"), sheetfile)
+        sheet = Sheet.new(
+          self,
+          sheet.attr("name"),
+          sheet.attr("sheetid"),
+          sheet.attr("state"),
+          sheet.attr("visible"),
+          sheet.attr("r:id"),
+          sheetfile
+        )
+        sheet.with_headers = with_headers
+        sheet
       end
     end
 

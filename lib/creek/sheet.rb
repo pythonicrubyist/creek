@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'zip/filesystem'
 require 'nokogiri'
 
@@ -5,16 +7,19 @@ module Creek
   class Creek::Sheet
     include Creek::Utils
 
+    HEADERS_ROW_NUMBER = '1'
+
+    attr_accessor :with_headers
     attr_reader :book,
                 :name,
                 :sheetid,
                 :state,
                 :visible,
                 :rid,
-                :index
+                :index,
+                :headers
 
-
-    def initialize book, name, sheetid, state, visible, rid, sheetfile
+    def initialize(book, name, sheetid, state, visible, rid, sheetfile)
       @book = book
       @name = name
       @sheetid = sheetid
@@ -45,7 +50,6 @@ module Creek
     def images_at(cell)
       @drawing.images_at(cell) if @images_present
     end
-
 
     ##
     # Provides an Enumerator that returns a hash representing each row.
@@ -89,35 +93,37 @@ module Creek
         closer = Nokogiri::XML::Reader::TYPE_END_ELEMENT
         Enumerator.new do |y|
           row, cells, cell = nil, {}, nil
-          cell_type  = nil
+          cell_type = nil
           cell_style_idx = nil
           @book.files.file.open(path) do |xml|
             Nokogiri::XML::Reader.from_io(xml).each do |node|
-              if (node.name.eql? 'row') and (node.node_type.eql? opener)
+              if node.name == 'row' && node.node_type == opener
                 row = node.attributes
-                row['cells'] = Hash.new
-                cells = Hash.new
+                row['cells'] = {}
+                cells = {}
                 y << (include_meta_data ? row : cells) if node.self_closing?
-              elsif (node.name.eql? 'row') and (node.node_type.eql? closer)
+              elsif node.name == 'row' && node.node_type == closer
                 processed_cells = fill_in_empty_cells(cells, row['r'], cell, use_simple_rows_format)
+                @headers = processed_cells if row['r'] == HEADERS_ROW_NUMBER
 
                 if @images_present
                   processed_cells.each do |cell_name, cell_value|
                     next unless cell_value.nil?
+
                     processed_cells[cell_name] = images_at(cell_name)
                   end
                 end
 
                 row['cells'] = processed_cells
                 y << (include_meta_data ? row : processed_cells)
-              elsif (node.name.eql? 'c') and (node.node_type.eql? opener)
+              elsif node.name == 'c' && node.node_type == opener
                 cell_type      = node.attributes['t']
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
-              elsif (['v', 't'].include? node.name) and (node.node_type.eql? opener)
+              elsif %w[v t].include?(node.name) && node.node_type == opener
                 unless cell.nil?
                   node.read
-                  cells[(use_simple_rows_format ? cell.tr("0-9", "") : cell)] = convert(node.value, cell_type, cell_style_idx)
+                  cells[cell] = convert(node.value, cell_type, cell_style_idx)
                 end
               end
             end
@@ -142,15 +148,13 @@ module Creek
     # The unzipped XML file does not contain any node for empty cells.
     # Empty cells are being padded in using this function
     def fill_in_empty_cells(cells, row_number, last_col, use_simple_rows_format)
-      new_cells = Hash.new
+      new_cells = {}
+      return new_cells if cells.empty?
 
-      unless cells.empty?
-        last_col = last_col.gsub(row_number, '')
-
-        ("A"..last_col).to_a.each do |column|
-          id = use_simple_rows_format ? "#{column}" : "#{column}#{row_number}"
-          new_cells[id] = cells[id]
-        end
+      last_col = last_col.gsub(row_number, '')
+      ('A'..last_col).to_a.each do |column|
+        id = cell_id(column, use_simple_rows_format, row_number)
+        new_cells[id] = cells["#{column}#{row_number}"]
       end
 
       new_cells
@@ -171,6 +175,12 @@ module Creek
       # Read sheet rels to find drawing file's location.
       sheet_rels_filepath = expand_to_rels_path(sheet_filepath)
       parse_xml(sheet_rels_filepath).css("Relationship[@Id='#{drawing_rid}']").first.attributes['Target'].value
+    end
+
+    def cell_id(column, use_simple_rows_format, row_number = '')
+      return "#{column}#{row_number}" unless use_simple_rows_format
+
+      with_headers && headers ? headers[column] : column
     end
   end
 end

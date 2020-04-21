@@ -1,26 +1,26 @@
+# frozen_string_literal: true
+
 require './spec/spec_helper'
 
 describe 'sheet' do
   let(:book_with_images) { Creek::Book.new('spec/fixtures/sample-with-images.xlsx') }
-  let(:book_no_images) { Creek::Book.new('spec/fixtures/sample.xlsx') }
   let(:sheetfile) { 'worksheets/sheet1.xml' }
   let(:sheet_with_images) { Creek::Sheet.new(book_with_images, 'Sheet 1', 1, '', '', '1', sheetfile) }
-  let(:sheet_no_images) { Creek::Sheet.new(book_no_images, 'Sheet 1', 1, '', '', '1', sheetfile) }
 
   def load_cell(rows, cell_name)
-    cell = rows.find { |row| !row[cell_name].nil? }
+    cell = rows.find { |row| row[cell_name] }
     cell[cell_name] if cell
   end
 
   context 'escaped ampersand' do
     let(:book_escaped) { Creek::Book.new('spec/fixtures/escaped.xlsx') }
     it 'does NOT escape ampersand' do
-      expect(book_escaped.sheets[0].rows.to_enum.map(&:values)).to eq([["abc", "def"], ["ghi", "j&k"]])
+      expect(book_escaped.sheets[0].rows.to_enum.map(&:values)).to eq([%w[abc def], %w[ghi j&k]])
     end
 
     let(:book_escaped2) { Creek::Book.new('spec/fixtures/escaped2.xlsx') }
     it 'does escape ampersand' do
-      expect(book_escaped2.sheets[0].rows.to_enum.map(&:values)).to eq([["abc", "def"], ["ghi", "j&k"]])
+      expect(book_escaped2.sheets[0].rows.to_enum.map(&:values)).to eq([%w[abc def], %w[ghi j&k]])
     end
   end
 
@@ -66,6 +66,9 @@ describe 'sheet' do
     end
 
     context 'with excel without images' do
+      let(:book_no_images) { Creek::Book.new('spec/fixtures/sample.xlsx') }
+      let(:sheet_no_images) { Creek::Sheet.new(book_no_images, 'Sheet 1', 1, '', '', '1', sheetfile) }
+
       it 'does not break on with_images' do
         rows = sheet_no_images.with_images.rows.map { |r| r }
         expect(load_cell(rows, 'A10')).to eq(0.15)
@@ -92,6 +95,30 @@ describe 'sheet' do
     it 'returns nil for empty cell without preloading images' do
       image = sheet_with_images.images_at('B3')
       expect(image).to eq(nil)
+    end
+  end
+
+  describe '#simple_rows' do
+    let(:book_with_headers) { Creek::Book.new('spec/fixtures/sample-with-headers.xlsx') }
+    let(:sheet) { Creek::Sheet.new(book_with_headers, 'Sheet 1', 1, '', '', '1', sheetfile) }
+
+    subject { sheet.simple_rows.to_a[1] }
+
+    it 'returns values by letters' do
+      expect(subject['A']).to eq 'value1'
+      expect(subject['B']).to eq 'value2'
+    end
+
+    context 'when enable with_headers property' do
+      before { sheet.with_headers = true }
+
+      subject { sheet.simple_rows.to_a[1] }
+
+      it 'returns values by headers name' do
+        expect(subject['HeaderA']).to eq 'value1'
+        expect(subject['HeaderB']).to eq 'value2'
+        expect(subject['HeaderC']).to eq 'value3'
+      end
     end
   end
 end
