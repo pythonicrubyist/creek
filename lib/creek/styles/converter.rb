@@ -110,7 +110,7 @@ module Creek
 
       def self.convert_bignum(value)
         if defined?(BigDecimal)
-          BigDecimal.new(value)
+          BigDecimal(value)
         else
           value.to_f
         end
