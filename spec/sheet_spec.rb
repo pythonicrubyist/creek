@@ -112,12 +112,22 @@ describe 'sheet' do
     context 'when enable with_headers property' do
       before { sheet.with_headers = true }
 
-      subject { sheet.simple_rows.to_a[1] }
-
       it 'returns values by headers name' do
         expect(subject['HeaderA']).to eq 'value1'
         expect(subject['HeaderB']).to eq 'value2'
         expect(subject['HeaderC']).to eq 'value3'
+      end
+
+      it 'returns headers correctly when called multiple times' do
+        row = sheet.simple_rows.to_a[1]
+        expect(row['HeaderA']).to eq 'value1'
+        expect(row['HeaderB']).to eq 'value2'
+        expect(row['HeaderC']).to eq 'value3'
+
+        row = sheet.simple_rows.to_a[1]
+        expect(row['HeaderA']).to eq 'value1'
+        expect(row['HeaderB']).to eq 'value2'
+        expect(row['HeaderC']).to eq 'value3'
       end
     end
   end

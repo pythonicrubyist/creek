@@ -92,6 +92,7 @@ module Creek
         opener = Nokogiri::XML::Reader::TYPE_ELEMENT
         closer = Nokogiri::XML::Reader::TYPE_END_ELEMENT
         Enumerator.new do |y|
+          @headers = nil
           row, cells, cell = nil, {}, nil
           cell_type = nil
           cell_style_idx = nil
@@ -104,7 +105,7 @@ module Creek
                 y << (include_meta_data ? row : cells) if node.self_closing?
               elsif node.name == 'row' && node.node_type == closer
                 processed_cells = fill_in_empty_cells(cells, row['r'], cell, use_simple_rows_format)
-                @headers = processed_cells if row['r'] == HEADERS_ROW_NUMBER
+                @headers = processed_cells if with_headers && row['r'] == HEADERS_ROW_NUMBER
 
                 if @images_present
                   processed_cells.each do |cell_name, cell_value|
@@ -177,7 +178,7 @@ module Creek
       parse_xml(sheet_rels_filepath).css("Relationship[@Id='#{drawing_rid}']").first.attributes['Target'].value
     end
 
-    def cell_id(column, use_simple_rows_format, row_number = '')
+    def cell_id(column, use_simple_rows_format, row_number)
       return "#{column}#{row_number}" unless use_simple_rows_format
 
       with_headers && headers ? headers[column] : column
