@@ -74,6 +74,16 @@ describe 'sheet' do
         expect(load_cell(rows, 'A10')).to eq(0.15)
       end
     end
+
+    context 'when nodes are namespaced' do
+      let(:namespaced_book) { Creek::Book.new('spec/fixtures/sample_namespaced.xlsx') }
+      let(:namespaced_sheet) { Creek::Sheet.new(namespaced_book, 'Sheet 1', 1, '', '', '1', sheetfile) }
+
+      it 'parses rows correctly' do
+        rows = namespaced_sheet.rows.map { |r| r }
+        expect(load_cell(rows, 'A10')).to eq(0.15)
+      end
+    end
   end
 
   describe '#images_at' do
@@ -128,6 +138,38 @@ describe 'sheet' do
         expect(row['HeaderA']).to eq 'value1'
         expect(row['HeaderB']).to eq 'value2'
         expect(row['HeaderC']).to eq 'value3'
+      end
+    end
+
+    context 'when nodes are namespaced' do
+      let(:namespaced_book) { Creek::Book.new('spec/fixtures/sample-with-headers_namespaced.xlsx') }
+      let(:sheet) { Creek::Sheet.new(namespaced_book, 'Sheet 1', 1, '', '', '1', sheetfile) }
+
+      it 'returns values by letters' do
+        expect(subject['A']).to eq 'value1'
+        expect(subject['B']).to eq 'value2'
+      end
+
+      context 'when enable with_headers property' do
+        before { sheet.with_headers = true }
+
+        it 'returns values by headers name' do
+          expect(subject['HeaderA']).to eq 'value1'
+          expect(subject['HeaderB']).to eq 'value2'
+          expect(subject['HeaderC']).to eq 'value3'
+        end
+
+        it 'returns headers correctly when called multiple times' do
+          row = sheet.simple_rows.to_a[1]
+          expect(row['HeaderA']).to eq 'value1'
+          expect(row['HeaderB']).to eq 'value2'
+          expect(row['HeaderC']).to eq 'value3'
+
+          row = sheet.simple_rows.to_a[1]
+          expect(row['HeaderA']).to eq 'value1'
+          expect(row['HeaderB']).to eq 'value2'
+          expect(row['HeaderC']).to eq 'value3'
+        end
       end
     end
   end
