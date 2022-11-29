@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="6" uniqueCount="5">
+    <x:si>
+        <x:t>Cell A1</x:t>
+    </x:si>
+    <x:si>
+        <x:t>Cell B1</x:t>
+    </x:si>
+    <x:si>
+        <x:t>My Cell</x:t>
+    </x:si>
+    <x:si>
+        <x:r>
+            <x:rPr>
+                <x:sz val="11"/>
+                <x:color rgb="FFFF0000"/>
+                <x:rFont val="Calibri"/>
+                <x:family val="2"/>
+                <x:scheme val="minor"/>
+            </x:rPr>
+            <x:t>Cell</x:t>
+        </x:r>
+        <x:r>
+            <x:rPr>
+                <x:sz val="11"/>
+                <x:color theme="1"/>
+                <x:rFont val="Calibri"/>
+                <x:family val="2"/>
+                <x:scheme val="minor"/>
+            </x:rPr>
+            <x:t xml:space="preserve"> </x:t>
+        </x:r>
+        <x:r>
+            <x:rPr>
+                <x:b/>
+                <x:sz val="11"/>
+                <x:color theme="1"/>
+                <x:rFont val="Calibri"/>
+                <x:family val="2"/>
+                <x:scheme val="minor"/>
+            </x:rPr>
+            <x:t>A2</x:t>
+        </x:r>
+    </x:si>
+    <x:si>
+        <x:r>
+            <x:rPr>
+                <x:sz val="11"/>
+                <x:color rgb="FF00B0F0"/>
+                <x:rFont val="Calibri"/>
+                <x:family val="2"/>
+                <x:scheme val="minor"/>
+            </x:rPr>
+            <x:t>Cell</x:t>
+        </x:r>
+        <x:r>
+            <x:rPr>
+                <x:sz val="11"/>
+                <x:color theme="1"/>
+                <x:rFont val="Calibri"/>
+                <x:family val="2"/>
+                <x:scheme val="minor"/>
+            </x:rPr>
+            <x:t xml:space="preserve"> </x:t>
+        </x:r>
+        <x:r>
+            <x:rPr>
+                <x:i/>
+                <x:sz val="11"/>
+                <x:color theme="1"/>
+                <x:rFont val="Calibri"/>
+                <x:family val="2"/>
+                <x:scheme val="minor"/>
+            </x:rPr>
+            <x:t>B2</x:t>
+        </x:r>
+    </x:si>
+    <x:si>
+        <x:t>Cell with_x000D_escaped_x000D_characters</x:t>
+    </x:si>
+    <x:si>
+        <x:t>吉田兼好</x:t>
+        <x:rPh sb="0" eb="2">
+            <x:t xml:space="preserve">ヨシダ </x:t>
+        </x:rPh>
+        <x:rPh sb="2" eb="4">
+            <x:t xml:space="preserve">ケンコウ </x:t>
+        </x:rPh>
+        <x:phoneticPr fontId="1"/>
+    </x:si>
+</x:sst>
