@@ -65,6 +65,20 @@ describe 'sheet' do
       end
     end
 
+    context 'when one cell anchored images in cell' do
+      let(:book_with_one_cell_anchored_images) { Creek::Book.new('spec/fixtures/sample-with-one-cell-anchored-images.xlsx') }
+      let(:sheet_with_one_cell_anchored_images) { Creek::Sheet.new(book_with_one_cell_anchored_images, 'Sheet 1', 1, '', '', '1', sheetfile) }
+      let(:rows) { sheet_with_one_cell_anchored_images.with_images.rows.map { |r| r } }
+
+      it 'returns image for anchored cell' do
+        expect(load_cell(rows, 'A2').size).to eq(1)
+      end
+
+      it 'returns nil for non-anchored cell' do
+        expect(load_cell(rows, 'A4')).to eq(nil)
+      end
+    end
+
     context 'with excel without images' do
       let(:book_no_images) { Creek::Book.new('spec/fixtures/sample.xlsx') }
       let(:sheet_no_images) { Creek::Sheet.new(book_no_images, 'Sheet 1', 1, '', '', '1', sheetfile) }

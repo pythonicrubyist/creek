@@ -66,7 +66,7 @@ module Creek
     # Drawing xml contains relationships ID's and coordinates (row, col).
     # Drawing relationships xml contains images' locations.
     def load_drawings_and_rels
-      @drawings = parse_xml(@drawing_filepath).css('xdr|twoCellAnchor')
+      @drawings = parse_xml(@drawing_filepath).css('xdr|twoCellAnchor', 'xdr|oneCellAnchor' )
       drawing_rels_filepath = expand_to_rels_path(@drawing_filepath)
       @drawings_rels = parse_xml(drawing_rels_filepath).css('Relationships')
     end
@@ -82,7 +82,7 @@ module Creek
       col_from_selector = 'xdr:from/xdr:col'.freeze
       col_to_selector = 'xdr:to/xdr:col'.freeze
 
-      @drawings.xpath('//xdr:twoCellAnchor').each do |drawing|
+      @drawings.xpath('//xdr:twoCellAnchor', '//xdr:oneCellAnchor').each do |drawing|
         # embed = drawing.xpath(image_selector).first.attributes['embed']
         temp = drawing.xpath(image_selector).first
         embed = temp.attributes['embed'] if temp
@@ -93,12 +93,17 @@ module Creek
 
         row_from = drawing.xpath(row_from_selector).text.to_i
         col_from = drawing.xpath(col_from_selector).text.to_i
-        row_to = drawing.xpath(row_to_selector).text.to_i
-        col_to = drawing.xpath(col_to_selector).text.to_i
 
-        (col_from..col_to).each do |col|
-          (row_from..row_to).each do |row|
-            @images_pathnames[[row, col]].push(path)
+        if drawing.name == 'oneCellAnchor'
+          @images_pathnames[[row_from , col_from ]].push(path)
+        else
+          row_to = drawing.xpath(row_to_selector).text.to_i
+          col_to = drawing.xpath(col_to_selector).text.to_i
+
+          (col_from..col_to).each do |col|
+            (row_from..row_to).each do |row|
+              @images_pathnames[[row, col]].push(path)
+            end
           end
         end
       end
