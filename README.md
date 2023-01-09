@@ -1,5 +1,5 @@
 [![version](https://badge.fury.io/rb/creek.svg)](https://badge.fury.io/rb/creek)
-[![downloads](https://ruby-gem-downloads-badge.herokuapp.com/creek?type=total&total_label=downloads)](https://ruby-gem-downloads-badge.herokuapp.com/creek?type=total&total_label=downloads)
+[![downloads](https://img.shields.io/gem/dt/creek)](https://rubygems.org/gems/creek)
 
 # Creek - Stream parser for large Excel (xlsx and xlsm) files.
 
