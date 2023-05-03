@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Creek
   module Utils
     def expand_to_rels_path(filepath)

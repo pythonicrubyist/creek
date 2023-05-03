@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'zip/filesystem'
 require 'nokogiri'
 require 'date'

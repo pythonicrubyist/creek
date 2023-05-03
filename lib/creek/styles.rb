@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Creek
   class Styles
     attr_accessor :book
