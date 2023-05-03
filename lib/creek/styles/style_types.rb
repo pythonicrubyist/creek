@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # https://github.com/hmcgowan/roo/blob/master/lib/roo/excelx.rb
 # https://github.com/woahdae/simple_xlsx_reader/blob/master/lib/simple_xlsx_reader.rb#L231
 module Creek
