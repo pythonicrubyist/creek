@@ -99,6 +99,10 @@ module Creek
           cell_style_idx = nil
           @book.files.file.open(path) do |xml|
             prefix = ''
+            name_row = "row"
+            name_c = "c"
+            name_v = "v"
+            name_t = "t"
             Nokogiri::XML::Reader.from_io(xml).each do |node|
               if prefix.empty? && node.namespaces.any?
                 namespace = node.namespaces.detect{|_key, uri| uri == SPREADSHEETML_URI }
@@ -107,13 +111,17 @@ module Creek
                          else
                            ''
                          end
+                name_row = "#{prefix}row"
+                name_c = "#{prefix}c"
+                name_v = "#{prefix}v"
+                name_t = "#{prefix}t"
               end
-              if node.name == "#{prefix}row" && node.node_type == opener
+              if node.name == name_row && node.node_type == opener
                 row = node.attributes
                 row['cells'] = {}
                 cells = {}
                 y << (include_meta_data ? row : cells) if node.self_closing?
-              elsif node.name == "#{prefix}row" && node.node_type == closer
+              elsif node.name == name_row && node.node_type == closer
                 processed_cells = fill_in_empty_cells(cells, row['r'], cell, use_simple_rows_format)
                 @headers = processed_cells if with_headers && row['r'] == HEADERS_ROW_NUMBER
 
@@ -127,11 +135,11 @@ module Creek
 
                 row['cells'] = processed_cells
                 y << (include_meta_data ? row : processed_cells)
-              elsif node.name == "#{prefix}c" && node.node_type == opener
+              elsif node.name == name_c && node.node_type == opener
                 cell_type      = node.attributes['t']
                 cell_style_idx = node.attributes['s']
                 cell           = node.attributes['r']
-              elsif ["#{prefix}v", "#{prefix}t"].include?(node.name) && node.node_type == opener
+              elsif (node.name == name_v || node.name == name_t) && node.node_type == opener
                 unless cell.nil?
                   node.read
                   cells[cell] = convert(node.value, cell_type, cell_style_idx)
