@@ -3,16 +3,16 @@ module Creek
     module Constants
       # Map of non-custom numFmtId to casting symbol
       NumFmtMap = {
-        0  => :string,         # General
-        1  => :fixnum,         # 0
-        2  => :float,          # 0.00
-        3  => :fixnum,         # #,##0
-        4  => :float,          # #,##0.00
-        5  => :unsupported,    # $#,##0_);($#,##0)
-        6  => :unsupported,    # $#,##0_);[Red]($#,##0)
-        7  => :unsupported,    # $#,##0.00_);($#,##0.00)
-        8  => :unsupported,    # $#,##0.00_);[Red]($#,##0.00)
-        9  => :percentage,     # 0%
+        0 => :string,         # General
+        1 => :fixnum,         # 0
+        2 => :float,          # 0.00
+        3 => :fixnum,         # #,##0
+        4 => :float,          # #,##0.00
+        5 => :unsupported,    # $#,##0_);($#,##0)
+        6 => :unsupported,    # $#,##0_);[Red]($#,##0)
+        7 => :unsupported,    # $#,##0.00_);($#,##0.00)
+        8 => :unsupported,    # $#,##0.00_);[Red]($#,##0.00)
+        9 => :percentage,     # 0%
         10 => :percentage,     # 0.00%
         11 => :bignum,         # 0.00E+00
         12 => :unsupported,    # # ?/?
@@ -35,7 +35,7 @@ module Creek
         47 => :time,           # mmss.0
         48 => :bignum,         # ##0.0E+0
         49 => :unsupported     # @
-      }
+      }.freeze
     end
   end
 end

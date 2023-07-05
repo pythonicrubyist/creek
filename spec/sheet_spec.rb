@@ -66,8 +66,12 @@ describe 'sheet' do
     end
 
     context 'when one cell anchored images in cell' do
-      let(:book_with_one_cell_anchored_images) { Creek::Book.new('spec/fixtures/sample-with-one-cell-anchored-images.xlsx') }
-      let(:sheet_with_one_cell_anchored_images) { Creek::Sheet.new(book_with_one_cell_anchored_images, 'Sheet 1', 1, '', '', '1', sheetfile) }
+      let(:book_with_one_cell_anchored_images) do
+        Creek::Book.new('spec/fixtures/sample-with-one-cell-anchored-images.xlsx')
+      end
+      let(:sheet_with_one_cell_anchored_images) do
+        Creek::Sheet.new(book_with_one_cell_anchored_images, 'Sheet 1', 1, '', '', '1', sheetfile)
+      end
       let(:rows) { sheet_with_one_cell_anchored_images.with_images.rows.map { |r| r } }
 
       it 'returns image for anchored cell' do

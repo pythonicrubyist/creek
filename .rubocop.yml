@@ -1,0 +1,27 @@
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+Metrics:
+  Enabled: false
+Naming/ConstantName:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/AndOr:
+  Enabled: false
+Style/StringConcatenation:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/OptionalBooleanParameter:
+  Enabled: false
+Style/TernaryParentheses:
+  EnforcedStyle: require_parentheses_when_complex
+
+Naming/PredicateName:
+  Enabled: false

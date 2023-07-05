@@ -3,7 +3,7 @@
 module Creek
   module Utils
     def expand_to_rels_path(filepath)
-      filepath.sub(/(\/[^\/]+$)/, '/_rels\1.rels')
+      filepath.sub(%r{(/[^/]+$)}, '/_rels\1.rels')
     end
 
     def file_exist?(path)
