@@ -1,7 +1,6 @@
 require './spec/spec_helper'
 
 describe 'shared strings' do
-
   it 'parses rich text strings correctly' do
     shared_strings_xml_file = File.open('spec/fixtures/sst.xml')
     doc = Nokogiri::XML(shared_strings_xml_file)
@@ -32,6 +31,5 @@ describe 'shared strings' do
       expect(dictionary[5]).to eq("Cell with\rescaped\rcharacters")
       expect(dictionary[6]).to eq('吉田兼好')
     end
-
   end
 end

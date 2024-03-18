@@ -8,7 +8,7 @@ module Creek
       include Creek::Styles::Constants
 
       # Excel non-printable character escape sequence
-      HEX_ESCAPE_REGEXP = /_x[0-9A-Fa-f]{4}_/
+      HEX_ESCAPE_REGEXP = /_x[0-9A-Fa-f]{4}_/.freeze
 
       ##
       # The heart of typecasting. The ruby type is determined either explicitly
@@ -29,14 +29,12 @@ module Creek
       # - shared_strings: needed for 's' (shared string) type
       # - base_date: from what date to begin, see method #base_date
 
-      DATE_TYPES = [:date, :time, :date_time].to_set
+      DATE_TYPES = %i[date time date_time].to_set
       def self.call(value, type, style, options = {})
         return nil if value.nil? || value.empty?
 
         # Sometimes the type is dictated by the style alone
-        if type.nil? || (type == 'n' && DATE_TYPES.include?(style))
-          type = style
-        end
+        type = style if type.nil? || (type == 'n' && DATE_TYPES.include?(style))
 
         case type
 
@@ -80,21 +78,19 @@ module Creek
           convert_unknown(value)
         end
       end
-      
+
       def self.convert_unknown(value)
-        begin
-          if value.nil? or value.empty?
-            return value
-          elsif value.to_i.to_s == value.to_s
-            return value.to_i
-          elsif value.to_f.to_s == value.to_s
-            return value.to_f
-          else
-            return value
-          end
-        rescue
-          return value
+        if value.nil? or value.empty?
+          value
+        elsif value.to_i.to_s == value.to_s
+          value.to_i
+        elsif value.to_f.to_s == value.to_s
+          value.to_f
+        else
+          value
         end
+      rescue StandardError
+        value
       end
 
       def self.convert_date(value, options)
@@ -124,17 +120,15 @@ module Creek
         value.gsub(HEX_ESCAPE_REGEXP) { |match| match[2, 4].to_i(16).chr(Encoding::UTF_8) }
       end
 
-      private
+      def self.base_date(options)
+        options.fetch(:base_date, Date.new(1899, 12, 30))
+      end
 
-        def self.base_date(options)
-          options.fetch(:base_date, Date.new(1899, 12, 30))
-        end
+      def self.round_datetime(datetime_string)
+        /(?<yyyy>\d+)-(?<mm>\d+)-(?<dd>\d+) (?<hh>\d+):(?<mi>\d+):(?<ss>\d+.\d+)/ =~ datetime_string
 
-        def self.round_datetime(datetime_string)
-          /(?<yyyy>\d+)-(?<mm>\d+)-(?<dd>\d+) (?<hh>\d+):(?<mi>\d+):(?<ss>\d+.\d+)/ =~ datetime_string
-
-          ::Time.new(yyyy.to_i, mm.to_i, dd.to_i, hh.to_i, mi.to_i, ss.to_r).round(0)
-        end
+        ::Time.new(yyyy.to_i, mm.to_i, dd.to_i, hh.to_i, mi.to_i, ss.to_r).round(0)
+      end
     end
   end
 end

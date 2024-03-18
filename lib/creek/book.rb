@@ -14,11 +14,11 @@ module Creek
     DATE_1900 = Date.new(1899, 12, 30).freeze
     DATE_1904 = Date.new(1904, 1, 1).freeze
 
-    def initialize path, options = {}
+    def initialize(path, options = {})
       check_file_extension = options.fetch(:check_file_extension, true)
       if check_file_extension
         extension = File.extname(options[:original_filename] || path).downcase
-        raise 'Not a valid file format.' unless (['.xlsx', '.xlsm'].include? extension)
+        raise 'Not a valid file format.' unless ['.xlsx', '.xlsm'].include? extension
       end
       path = download_file(path) if options[:remote]
       @files = Zip::File.open(path)
@@ -28,28 +28,26 @@ module Creek
 
     def sheets
       @sheets ||= begin
-        doc = @files.file.open "xl/workbook.xml"
+        doc = @files.file.open 'xl/workbook.xml'
         xml = Nokogiri::XML::Document.parse doc
         namespaces = xml.namespaces
 
-        cssPrefix = ''
+        css_prefix = ''
         namespaces.each do |namespace|
-          if namespace[1] == 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' && namespace[0] != 'xmlns' then
-            cssPrefix = namespace[0].split(':')[1]+'|'
-          end
+          css_prefix = namespace[0].split(':')[1] + '|' if namespace[1] == 'http://schemas.openxmlformats.org/spreadsheetml/2006/main' && namespace[0] != 'xmlns'
         end
 
-        rels_doc = @files.file.open "xl/_rels/workbook.xml.rels"
-        rels = Nokogiri::XML::Document.parse(rels_doc).css("Relationship")
-        xml.css(cssPrefix+'sheet').map do |sheet|
-          sheetfile = rels.find { |el| sheet.attr("r:id") == el.attr("Id") }.attr("Target")
+        rels_doc = @files.file.open 'xl/_rels/workbook.xml.rels'
+        rels = Nokogiri::XML::Document.parse(rels_doc).css('Relationship')
+        xml.css(css_prefix + 'sheet').map do |sheet|
+          sheetfile = rels.find { |el| sheet.attr('r:id') == el.attr('Id') }.attr('Target')
           sheet = Sheet.new(
             self,
-            sheet.attr("name"),
-            sheet.attr("sheetid"),
-            sheet.attr("state"),
-            sheet.attr("visible"),
-            sheet.attr("r:id"),
+            sheet.attr('name'),
+            sheet.attr('sheetid'),
+            sheet.attr('state'),
+            sheet.attr('visible'),
+            sheet.attr('r:id'),
             sheetfile
           )
           sheet.with_headers = with_headers
@@ -68,23 +66,23 @@ module Creek
 
     def base_date
       @base_date ||=
-      begin
-        # Default to 1900 (minus one day due to excel quirk) but use 1904 if
-        # it's set in the Workbook's workbookPr
-        # http://msdn.microsoft.com/en-us/library/ff530155(v=office.12).aspx
-        result = DATE_1900 # default
+        begin
+          # Default to 1900 (minus one day due to excel quirk) but use 1904 if
+          # it's set in the Workbook's workbookPr
+          # http://msdn.microsoft.com/en-us/library/ff530155(v=office.12).aspx
+          result = DATE_1900 # default
 
-        doc = @files.file.open "xl/workbook.xml"
-        xml = Nokogiri::XML::Document.parse doc
-        xml.css('workbookPr[date1904]').each do |workbookPr|
-          if workbookPr['date1904'] =~ /true|1/i
-            result = DATE_1904
-            break
+          doc = @files.file.open 'xl/workbook.xml'
+          xml = Nokogiri::XML::Document.parse doc
+          xml.css('workbookPr[date1904]').each do |workbook_pr|
+            if workbook_pr['date1904'] =~ /true|1/i
+              result = DATE_1904
+              break
+            end
           end
-        end
 
-        result
-      end
+          result
+        end
     end
 
     private

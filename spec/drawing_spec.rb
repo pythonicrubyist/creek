@@ -3,7 +3,9 @@ require './spec/spec_helper'
 describe 'drawing' do
   let(:book) { Creek::Book.new('spec/fixtures/sample-with-images.xlsx') }
   let(:book_no_images) { Creek::Book.new('spec/fixtures/sample.xlsx') }
-  let(:book_with_one_cell_anchored_images) { Creek::Book.new('spec/fixtures/sample-with-one-cell-anchored-images.xlsx') }
+  let(:book_with_one_cell_anchored_images) do
+    Creek::Book.new('spec/fixtures/sample-with-one-cell-anchored-images.xlsx')
+  end
   let(:drawingfile) { 'xl/drawings/drawing1.xml' }
   let(:drawing) { Creek::Drawing.new(book, drawingfile) }
   let(:drawing_without_images) { Creek::Drawing.new(book_no_images, drawingfile) }

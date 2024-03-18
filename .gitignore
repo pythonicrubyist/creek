@@ -18,3 +18,5 @@ tmp
 
 # Mac finder artifacts
 .DS_Store
+
+.idea
