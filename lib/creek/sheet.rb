@@ -127,7 +127,7 @@ module Creek
 
                 if @images_present
                   processed_cells.each do |cell_name, cell_value|
-                    next unless cell_value.nil?
+                    next unless cell_value.blank?
 
                     processed_cells[cell_name] = images_at(cell_name)
                   end
