@@ -9,7 +9,8 @@ module Creek
   class Creek::Book
     attr_reader :files,
                 :shared_strings,
-                :with_headers
+                :with_headers,
+                :parse_general_as_number
 
     DATE_1900 = Date.new(1899, 12, 30).freeze
     DATE_1904 = Date.new(1904, 1, 1).freeze
@@ -24,6 +25,7 @@ module Creek
       @files = Zip::File.open(path)
       @shared_strings = SharedStrings.new(self)
       @with_headers = options.fetch(:with_headers, false)
+      @parse_general_as_number = options.fetch(:parse_general_as_number, false)
     end
 
     def sheets
@@ -51,6 +53,7 @@ module Creek
             sheetfile
           )
           sheet.with_headers = with_headers
+          sheet.parse_general_as_number = parse_general_as_number
           sheet
         end
       end

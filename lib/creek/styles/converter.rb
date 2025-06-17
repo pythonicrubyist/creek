@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'set'
+require 'bigdecimal'
 
 module Creek
   class Styles
@@ -30,6 +31,7 @@ module Creek
       # - base_date: from what date to begin, see method #base_date
 
       DATE_TYPES = %i[date time date_time].to_set
+      NUMERIC_REGEXP = /\A-?(?:\d+(?:\.\d+)?|\d*\.\d+)(?:[eE][+-]?\d+)?\z/.freeze
       def self.call(value, type, style, options = {})
         return nil if value.nil? || value.empty?
 
@@ -59,9 +61,13 @@ module Creek
         ##
 
         when :string
-          value
+          if options[:parse_general_as_number] && numeric_string?(value)
+            convert_general_number(value)
+          else
+            value
+          end
         when :unsupported
-          convert_unknown(value)
+          convert_unknown(value, options)
         when :fixnum
           value.to_i
         when :float, :percentage
@@ -75,13 +81,15 @@ module Creek
 
         ## Nothing matched
         else
-          convert_unknown(value)
+          convert_unknown(value, options)
         end
       end
 
-      def self.convert_unknown(value)
-        if value.nil? or value.empty?
+      def self.convert_unknown(value, options = {})
+        if value.nil? || value.empty?
           value
+        elsif options[:parse_general_as_number] && numeric_string?(value)
+          convert_general_number(value)
         elsif value.to_i.to_s == value.to_s
           value.to_i
         elsif value.to_f.to_s == value.to_s
@@ -128,6 +136,18 @@ module Creek
         /(?<yyyy>\d+)-(?<mm>\d+)-(?<dd>\d+) (?<hh>\d+):(?<mi>\d+):(?<ss>\d+.\d+)/ =~ datetime_string
 
         ::Time.new(yyyy.to_i, mm.to_i, dd.to_i, hh.to_i, mi.to_i, ss.to_r).round(0)
+      end
+
+      def self.numeric_string?(value)
+        value.match?(NUMERIC_REGEXP)
+      end
+
+      def self.convert_general_number(value)
+        if defined?(BigDecimal)
+          BigDecimal(value)
+        else
+          value.to_f
+        end
       end
     end
   end

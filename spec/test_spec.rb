@@ -76,6 +76,25 @@ describe 'Creek parsing a file with large numbrts.' do
   end
 end
 
+describe 'Creek parsing a file with large numbers with automatic conversion' do
+  before(:all) do
+    @creek = Creek::Book.new 'spec/fixtures/large_numbers.xlsx', parse_general_as_number: true
+    @expected_simple_rows = [{ 'A' => 783_294_732.0, 'B' => '783294732', 'C' => 783_294_732.0 }]
+  end
+
+  after(:all) do
+    @creek.close
+  end
+
+  it 'casts general numbers to floats' do
+    rows = []
+    @creek.sheets[0].simple_rows.each do |row|
+      rows << row
+    end
+    expect(rows[0]).to eq(@expected_simple_rows[0])
+  end
+end
+
 describe 'Creek parsing a sample XLSX file' do
   before(:all) do
     @creek = Creek::Book.new 'spec/fixtures/sample.xlsx'
