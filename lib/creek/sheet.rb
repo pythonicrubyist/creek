@@ -119,12 +119,14 @@ module Creek
               name_v = "#{prefix}v"
               name_t = "#{prefix}t"
             end
-            if node.name == name_row && node.node_type == opener
+            node_name = node.name
+            node_type = node.node_type
+            if node_name == name_row && node_type == opener
               row = node.attributes
               row['cells'] = {}
               cells = {}
               y << (include_meta_data ? row : cells) if node.self_closing?
-            elsif node.name == name_row && node.node_type == closer
+            elsif node_name == name_row && node_type == closer
               processed_cells = fill_in_empty_cells(cells, row['r'], cell, use_simple_rows_format)
               @headers = processed_cells if with_headers && row['r'] == HEADERS_ROW_NUMBER
 
@@ -138,11 +140,11 @@ module Creek
 
               row['cells'] = processed_cells
               y << (include_meta_data ? row : processed_cells)
-            elsif node.name == name_c && node.node_type == opener
+            elsif node_name == name_c && node_type == opener
               cell_type      = node.attributes['t']
               cell_style_idx = node.attributes['s']
               cell           = node.attributes['r']
-            elsif (node.name == name_v || node.name == name_t) && node.node_type == opener
+            elsif (node_name == name_v || node_name == name_t) && node_type == opener
               unless cell.nil?
                 node.read
                 cells[cell] = convert(node.value, cell_type, cell_style_idx)
