@@ -142,7 +142,7 @@ module Creek
               cell_type      = node.attributes['t']
               cell_style_idx = node.attributes['s']
               cell           = node.attributes['r']
-            elsif (node.name == name_v || node.name == name_t) && node.node_type == opener
+            elsif [name_v, name_t].include?(node.name) && node.node_type == opener
               unless cell.nil?
                 node.read
                 cells[cell] = convert(node.value, cell_type, cell_style_idx)
