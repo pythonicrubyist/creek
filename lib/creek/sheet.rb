@@ -107,18 +107,15 @@ module Creek
           name_v = 'v'
           name_t = 't'
           Nokogiri::XML::Reader.from_io(xml).each do |node|
-            if prefix.empty? && node.namespaces.any?
-              namespace = node.namespaces.detect { |_key, uri| uri == SPREADSHEETML_URI }
-              prefix = if namespace && namespace[0].start_with?('xmlns:')
-                         namespace[0].delete_prefix('xmlns:') + ':'
-                       else
-                         ''
-                       end
-              name_row = "#{prefix}row"
-              name_c = "#{prefix}c"
-              name_v = "#{prefix}v"
-              name_t = "#{prefix}t"
+            next unless node.namespace_uri == SPREADSHEETML_URI
+            if prefix.empty? && node.prefix
+              prefix = node.prefix
+              name_row = "#{prefix}:row"
+              name_c = "#{prefix}:c"
+              name_v = "#{prefix}:v"
+              name_t = "#{prefix}:t"
             end
+
             if node.name == name_row && node.node_type == opener
               row = node.attributes
               row['cells'] = {}
