@@ -10,7 +10,8 @@ module Creek
     HEADERS_ROW_NUMBER = '1'
     SPREADSHEETML_URI = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
 
-    attr_accessor :with_headers
+    attr_accessor :with_headers, 
+                  :parse_general_as_number
     attr_reader :book,
                 :name,
                 :sheetid,
@@ -161,7 +162,8 @@ module Creek
     def converter_options
       @converter_options ||= {
         shared_strings: @book.shared_strings.dictionary,
-        base_date: @book.base_date
+        base_date: @book.base_date,
+        parse_general_as_number: @book.parse_general_as_number
       }
     end
 

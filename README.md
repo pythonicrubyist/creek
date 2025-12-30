@@ -107,6 +107,27 @@ By default, Creek will map cell names with letter and number(A1, B3 and etc). To
 creek = Creek::Book.new file.path, with_headers: true
 ```
 
+## Handling decimals with General format
+
+When an Excel cell uses the *General* number format, Creek returns the raw
+string from the file. Numeric values such as `0.001` may therefore appear as
+`"1E-3"`. To work with the numeric value, cast it manually or enable automatic
+parsing with the `parse_general_as_number` option:
+
+```ruby
+require 'bigdecimal'
+
+creek = Creek::Book.new 'spec/fixtures/sample.xlsx', parse_general_as_number: true
+sheet = creek.sheets[0]
+
+sheet.rows.each do |row|
+  value = row['M2']
+  decimal = BigDecimal(value)
+  puts decimal.to_f # => 0.001
+end
+```
+
+Without this option, you may cast `value` manually using `BigDecimal` or `Float`.
 
 ## Contributing
 
