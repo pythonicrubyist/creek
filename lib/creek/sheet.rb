@@ -100,6 +100,9 @@ module Creek
         cell = nil
         cell_type = nil
         cell_style_idx = nil
+        last_cell_ref = nil
+        current_col_index = nil
+        increment_on_close = false
         @book.files.file.open(path) do |xml|
           prefix = ''
           name_row = 'row'
@@ -123,9 +126,11 @@ module Creek
               row = node.attributes
               row['cells'] = {}
               cells = {}
+              last_cell_ref = nil
+              current_col_index = 0
               y << (include_meta_data ? row : cells) if node.self_closing?
             elsif node.name == name_row && node.node_type == closer
-              processed_cells = fill_in_empty_cells(cells, row['r'], cell, use_simple_rows_format)
+              processed_cells = fill_in_empty_cells(cells, row['r'], last_cell_ref, use_simple_rows_format)
               @headers = processed_cells if with_headers && row['r'] == HEADERS_ROW_NUMBER
 
               if @images_present
@@ -142,6 +147,33 @@ module Creek
               cell_type      = node.attributes['t']
               cell_style_idx = node.attributes['s']
               cell           = node.attributes['r']
+              if cell.nil? || cell.empty?
+                row_number = row && row['r']
+                if row_number && !current_col_index.nil?
+                  cell = "#{column_index_to_letters(current_col_index)}#{row_number}"
+                end
+              else
+                col_letters = column_from_cell_ref(cell)
+                current_col_index = column_letters_to_index(col_letters) unless col_letters.nil?
+              end
+              last_cell_ref = cell unless cell.nil?
+              if node.self_closing?
+                current_col_index += 1 if !current_col_index.nil?
+                increment_on_close = false
+                cell = nil
+                cell_type = nil
+                cell_style_idx = nil
+              else
+                increment_on_close = true
+              end
+            elsif node.name == name_c && node.node_type == closer
+              if increment_on_close && !current_col_index.nil?
+                current_col_index += 1
+              end
+              increment_on_close = false
+              cell = nil
+              cell_type = nil
+              cell_style_idx = nil
             elsif (node.name == name_v || node.name == name_t) && node.node_type == opener
               unless cell.nil?
                 node.read
@@ -170,7 +202,7 @@ module Creek
     # Empty cells are being padded in using this function
     def fill_in_empty_cells(cells, row_number, last_col, use_simple_rows_format)
       new_cells = {}
-      return new_cells if cells.empty?
+      return new_cells if cells.empty? || row_number.nil? || last_col.nil?
 
       last_col = last_col.gsub(row_number, '')
       ('A'..last_col).to_a.each do |column|
@@ -202,6 +234,28 @@ module Creek
       return "#{column}#{row_number}" unless use_simple_rows_format
 
       (with_headers && headers) ? headers[column] : column
+    end
+
+    def column_from_cell_ref(cell_ref)
+      cell_ref.to_s.upcase[/[A-Z]+/]
+    end
+
+    def column_letters_to_index(column_letters)
+      return nil if column_letters.nil? || column_letters.empty?
+
+      column_letters.chars.reduce(0) { |sum, char| (sum * 26) + (char.ord - 64) } - 1
+    end
+
+    def column_index_to_letters(column_index)
+      return nil if column_index.nil? || column_index.negative?
+
+      result = +''
+      index = column_index
+      while index >= 0
+        result.prepend((index % 26 + 65).chr)
+        index = (index / 26) - 1
+      end
+      result
     end
   end
 end
