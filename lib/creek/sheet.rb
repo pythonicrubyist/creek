@@ -101,30 +101,51 @@ module Creek
         cell_type = nil
         cell_style_idx = nil
         @book.files.file.open(path) do |xml|
-          prefix = ''
+          namespace_resolved = false
           name_row = 'row'
           name_c = 'c'
           name_v = 'v'
           name_t = 't'
           Nokogiri::XML::Reader.from_io(xml).each do |node|
-            if prefix.empty? && node.namespaces.any?
-              namespace = node.namespaces.detect { |_key, uri| uri == SPREADSHEETML_URI }
-              prefix = if namespace && namespace[0].start_with?('xmlns:')
-                         namespace[0].delete_prefix('xmlns:') + ':'
-                       else
-                         ''
-                       end
+            # Resolve the namespace prefix once, from the first node in the spreadsheetml
+            # namespace (the worksheet root).
+            #
+            # `Reader#namespaces` is not used for this: it goes through `xmlTextReaderExpand`,
+            # which materialises the whole subtree under the current node. On the root element
+            # that subtree is the *entire* document, so a single call builds a DOM of the whole
+            # worksheet and the streaming parse is lost. `Reader#prefix` and `Reader#namespace_uri`
+            # read the current node only, and never expand.
+            if !namespace_resolved && node.namespace_uri == SPREADSHEETML_URI
+              prefix = node.prefix ? "#{node.prefix}:" : ''
               name_row = "#{prefix}row"
               name_c = "#{prefix}c"
               name_v = "#{prefix}v"
               name_t = "#{prefix}t"
+              namespace_resolved = true
             end
-            if node.name == name_row && node.node_type == opener
-              row = node.attributes
+
+            node_name = node.name
+            node_type = node.node_type
+
+            if node_type == opener && (node_name == name_v || node_name == name_t)
+              unless cell.nil?
+                node.read
+                cells[cell] = convert(node.value, cell_type, cell_style_idx)
+              end
+            elsif node_name == name_c && node_type == opener
+              # Fetch the three attributes individually rather than via
+              # attribute_hash/attributes: with hundreds of thousands of cells
+              # the per-cell Hash allocation dominates, so three cheap C lookups
+              # are both faster and leaner than building and indexing a hash.
+              cell_type      = node.attribute('t')
+              cell_style_idx = node.attribute('s')
+              cell           = node.attribute('r')
+            elsif node_name == name_row && node_type == opener
+              row = include_meta_data ? node.attribute_hash : { 'r' => node.attribute('r') } # `attribute_hash` expands the row's whole subtree: prevent it as much as possible
               row['cells'] = {}
               cells = {}
               y << (include_meta_data ? row : cells) if node.self_closing?
-            elsif node.name == name_row && node.node_type == closer
+            elsif node_name == name_row && node_type == closer
               processed_cells = fill_in_empty_cells(cells, row['r'], cell, use_simple_rows_format)
               @headers = processed_cells if with_headers && row['r'] == HEADERS_ROW_NUMBER
 
@@ -138,15 +159,6 @@ module Creek
 
               row['cells'] = processed_cells
               y << (include_meta_data ? row : processed_cells)
-            elsif node.name == name_c && node.node_type == opener
-              cell_type      = node.attributes['t']
-              cell_style_idx = node.attributes['s']
-              cell           = node.attributes['r']
-            elsif (node.name == name_v || node.name == name_t) && node.node_type == opener
-              unless cell.nil?
-                node.read
-                cells[cell] = convert(node.value, cell_type, cell_style_idx)
-              end
             end
           end
         end
@@ -172,8 +184,8 @@ module Creek
       new_cells = {}
       return new_cells if cells.empty?
 
-      last_col = last_col.gsub(row_number, '')
-      ('A'..last_col).to_a.each do |column|
+      last_col = last_col.delete_suffix(row_number)
+      ('A'..last_col).each do |column|
         id = cell_id(column, use_simple_rows_format, row_number)
         new_cells[id] = cells["#{column}#{row_number}"]
       end
